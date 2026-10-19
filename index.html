@@ -2847,7 +2847,7 @@ function updateChop(){
   if(a.frame>=36){
     let t=trees[a.treeIndex];
     if(t&&t[2]>=4&&(Number(t[3])||0)<2){t[3]=(Number(t[3])||0)+1;chopAction=null;ui();save();msg('El árbol frondoso recibió un hachazo. '+t[3]+'/3; aún se mantiene en pie.');return;}
-    if(t){let jungleTree=t[2]>=4;trees.splice(a.treeIndex,1);let woodGain=jungleTree?10:3+Math.floor(Math.random()*4),seedGain=2;wood+=woodGain;seeds+=seedGain;msg(jungleTree?'¡Árbol frondoso derribado! +10🪵 +2🌱 semillas · +2 XP':'¡Árbol derribado! +'+woodGain+'🪵 +'+seedGain+'🌱 semillas · +2 XP');awardXP(2);}
+    if(t){let jungleTree=t[2]>=4;if(onlineIsGuest())window.HVOnline.sendWorldAction('cut-tree',{x:t[0],y:t[1]});trees.splice(a.treeIndex,1);let woodGain=jungleTree?10:3+Math.floor(Math.random()*4),seedGain=2;wood+=woodGain;seeds+=seedGain;msg(jungleTree?'¡Árbol frondoso derribado! +10🪵 +2🌱 semillas · +2 XP':'¡Árbol derribado! +'+woodGain+'🪵 +'+seedGain+'🌱 semillas · +2 XP');awardXP(2);}
     chopAction=null;
   }
 }
@@ -5686,7 +5686,7 @@ function items(){
 }
 function nearestLootDrop(){let idx=-1,dmin=24;lootDrops.forEach((d,i)=>{let dist=Math.hypot(player.x-(d.x+4),player.y-(d.y+4));if(dist<dmin){idx=i;dmin=dist;}});return idx;}
 function collectLootDrop(i,byDog=false){
-  let d=lootDrops[i];if(!d)return;
+  let d=lootDrops[i];if(!d)return;if(onlineIsGuest()&&d.onlineId)window.HVOnline.sendWorldAction('collect-loot',{entityId:d.onlineId});
   if(d.type==='apple')apples++;else if(d.type==='meat')meat++;else if(d.type==='rolledLeather')rolledLeather++;else if(d.type==='bone')bones++;else if(d.type==='feather')feathers++;else if(d.type==='web')webs++;else if(d.type==='deathPearl')deathPearls++;else if(d.type==='duckEgg')eggs++;else if(d.type==='log')wood++;else if(d.type==='luminousDiamond')luminousDiamonds++;else if(d.type==='ironChunk')iron++;else if(d.type==='nails')nails+=2;else if(d.type==='farmerRobot'){farmerRobotOwned=true;farmerRobotPos=null;farmerRobotNextPlankAt=0;farmerRobotAction='idle';}
   lootDrops.splice(i,1);ui();save();playPick();
   let names={apple:'una manzana',meat:'carne',rolledLeather:'cuero enrollado',bone:'un hueso',feather:'pluma',web:'telaraña',deathPearl:'perla de la muerte',duckEgg:'huevo de pato silvestre',log:'un tronco de madera',luminousDiamond:'un diamante luminoso',ironChunk:'un fragmento de hierro',nails:'2 clavos',farmerRobot:'el robot granjero'},itemName=names[d.type]||'un objeto';msg(byDog?'Tu perro recogió '+itemName+' y lo llevó a tu inventario.':d.type==='farmerRobot'?'Recogiste el robot granjero. Colócalo junto a tus cultivos desde Construir.':'Recogiste '+itemName+'.');
@@ -6177,6 +6177,7 @@ function act(){
     if(a.type==='zombieChicken'){msg('La gallina zombificada no puede darte huevos. Solo la espada o el machete le causan daño.');return;}
     if(a.type==='cow'){if(day<a.bornDay+1)msg('La vaca aún está creciendo; madurará al comenzar el siguiente día.');else msg('Vaca adulta: produce leche automáticamente cada 5 minutos. Límite de inventario: 500 vasos.');return;}
     if(a.ready){
+      if(onlineIsGuest()&&a.onlineId)window.HVOnline.sendWorldAction('collect-animal',{entityId:a.onlineId});
       if(a.type==='chicken'){eggs++;let readyCount=Number.isFinite(Number(a.readyCount))?Math.max(0,Math.floor(Number(a.readyCount))):(a.ready?1:0);a.readyCount=Math.max(0,readyCount-1);a.ready=a.readyCount>0;a.cd=0;msg(a.ready?'¡Recogiste huevo! 🥚 Quedan '+a.readyCount+' listos en esta gallina.':'¡Recogiste huevo! 🥚 Cada gallina pone otro cada 5 minutos.');}
       else { fruit++; a.ready=0; a.cd=500; msg('¡Animal te dio producto!'); }
       ui();save();playHarvest(); return;
@@ -6185,12 +6186,12 @@ function act(){
     }
   }
   let i=nearest();if(i>=0){
-    picked.add(i);fruit++;
+    if(onlineIsGuest())window.HVOnline.sendWorldAction('pick-berry',{entityId:String(i)});picked.add(i);fruit++;
     let kind=berries[i].kind,seedNames={strawberry:'fresa',carrot:'zanahoria',grape:'uva'};
     if(seedNames[kind]){cropSeeds[kind]=(cropSeeds[kind]||0)+1;msg('¡Recogiste '+seedNames[kind]+'! +1🌱 semilla de '+seedNames[kind]+'. Reaparece en 15-25s · +5 XP');}
     else{seeds++;msg('¡Recogiste '+kind+'! +1🌱 semilla de árbol. Reaparece en 15-25s · +5 XP');}
     ui();playPick();respawnBerry(i,15000);awardXP(5);return}
-  for(let j=crops.length-1;j>=0;j--){let p=crops[j];if(Math.hypot(player.x-p.x,player.y-p.y)<26&&p.grown){let type=p.cropType||'strawberry';crops.splice(j,1);if(type==='rose'){roses++;ui();playHarvest();msg('¡Cosechaste una rosa! +1🌹');}else{cropInventory[type]=(cropInventory[type]||0)+1;cropSeeds[type]=(cropSeeds[type]||0)+1;ui();playHarvest();msg('¡Cosechaste '+(type==='carrot'?'zanahoria':type==='grape'?'uvas':'fresa')+'! +1🌱 semilla de '+(type==='carrot'?'zanahoria':type==='grape'?'uva':'fresa')+' · +5 XP');awardXP(5);}return}}
+  for(let j=crops.length-1;j>=0;j--){let p=crops[j];if(Math.hypot(player.x-p.x,player.y-p.y)<26&&p.grown){let type=p.cropType||'strawberry';if(onlineIsGuest()&&p.onlineId)window.HVOnline.sendWorldAction('harvest-crop',{entityId:p.onlineId});crops.splice(j,1);if(type==='rose'){roses++;ui();playHarvest();msg('¡Cosechaste una rosa! +1🌹');}else{cropInventory[type]=(cropInventory[type]||0)+1;cropSeeds[type]=(cropSeeds[type]||0)+1;ui();playHarvest();msg('¡Cosechaste '+(type==='carrot'?'zanahoria':type==='grape'?'uvas':'fresa')+'! +1🌱 semilla de '+(type==='carrot'?'zanahoria':type==='grape'?'uva':'fresa')+' · +5 XP');awardXP(5);}return}}
   if(!inHouse&&!buildMode&&tryUseShovel())return;
   msg('Puerta casa para entrar, o fruta/animal/cultivo/tienda');
 }
@@ -6489,7 +6490,7 @@ function plantSelectedCrop(){
   let p=cropPlantStatus();
   if(!p.valid){msg(p.reason);return;}
   let type=selectedCrop,planted={x:p.x,y:p.y,grown:false,cropType:type,plantedAt:Date.now()},dx=player.dir==='left'?-1:player.dir==='right'?1:0,dy=player.dir==='up'?-1:player.dir==='down'?1:0;
-  crops.push(planted);if(type==='rose')roses--;else cropSeeds[type]--;cropPlantChain={anchorX:player.x,anchorY:player.y,dir:player.dir,nextX:p.x+dx*32,nextY:p.y+dy*32};ui();playPlant();$('plantMenu').style.display='none';
+  crops.push(planted);if(onlineIsGuest())window.HVOnline.sendWorldAction('plant-crop',{x:planted.x,y:planted.y,cropType:type});if(type==='rose')roses--;else cropSeeds[type]--;cropPlantChain={anchorX:player.x,anchorY:player.y,dir:player.dir,nextX:p.x+dx*32,nextY:p.y+dy*32};ui();playPlant();$('plantMenu').style.display='none';
   let minutes=type==='carrot'?5:type==='grape'?10:1,names={strawberry:'fresa',carrot:'zanahoria',grape:'uvas',rose:'rosa'};
   msg('¡Sembraste '+names[type]+'! Crecerá en '+minutes+' min.');scheduleCropGrowth(planted);
 }
@@ -6649,7 +6650,7 @@ $('buyHammer').onclick=()=>{
   if(hasHammer){ msg('Ya tienes martillo'); return; }
   buy(50,()=>{hasHammer=true;},'¡Compraste martillo! Ahora puedes construir corrales');
 };
-function purchaseFarmAnimal(type,cost){let pens=getClosedPens();if(!pens.length){msg('Construye un corral completamente cerrado con al menos una puerta cerrada antes de comprar animales.');return;}let pen=chooseAnimalPen(player.x,player.y,pens),spawn=findAnimalSpawn(pen);if(!spawn){msg('El corral cerrado no tiene espacio libre para otro animal.');return;}let now=performance.now();buy(cost,()=>{let animal={x:spawn.x,y:spawn.y,type,dir:Math.random()<0.5?'left':'right',walk:0,frame:0,ready:0,readyCount:type==='chicken'?0:undefined,cd:type==='cow'?0:300,nextEatAt:now+1800+Math.random()*4200,eatingUntil:0};if(type==='cow'){animal.bornDay=day;animal.nextMilkAt=0;}else if(type==='chicken'){animal.nextEggAt=Date.now()+CHICKEN_EGG_INTERVAL_MS;}animals.push(animal);},type==='cow'?'¡Compraste una vaca joven! Crecerá al pasar un día.':'¡Compraste gallina! Apareció dentro del corral.');}
+function purchaseFarmAnimal(type,cost){let pens=getClosedPens();if(!pens.length){msg('Construye un corral completamente cerrado con al menos una puerta cerrada antes de comprar animales.');return;}let pen=chooseAnimalPen(player.x,player.y,pens),spawn=findAnimalSpawn(pen);if(!spawn){msg('El corral cerrado no tiene espacio libre para otro animal.');return;}let now=performance.now();buy(cost,()=>{let animal={x:spawn.x,y:spawn.y,type,dir:Math.random()<0.5?'left':'right',walk:0,frame:0,ready:0,readyCount:type==='chicken'?0:undefined,cd:type==='cow'?0:300,nextEatAt:now+1800+Math.random()*4200,eatingUntil:0};if(type==='cow'){animal.bornDay=day;animal.nextMilkAt=0;}else if(type==='chicken'){animal.nextEggAt=Date.now()+CHICKEN_EGG_INTERVAL_MS;}animals.push(animal);if(onlineIsGuest())window.HVOnline.sendWorldAction('add-animal',{animalType:type,x:animal.x,y:animal.y});},type==='cow'?'¡Compraste una vaca joven! Crecerá al pasar un día.':'¡Compraste gallina! Apareció dentro del corral.');}
 $('buyChicken').onclick=()=>purchaseFarmAnimal('chicken',35);
 $('buyCow').onclick=()=>purchaseFarmAnimal('cow',90);
 $('buyWardrobe').onclick=()=>{
@@ -6883,6 +6884,52 @@ function drawMineWitch(){
   g.fillText('LA BRUJA',hatX,hatY-44);g.restore();
 }
 
+let onlineWorldSeq=0,onlineLootIdSeq=0,lastOnlineWorldSendAt=0,lastOnlineWorldAppliedSeq=0;
+function onlineIsGuest(){return !!(window.HVOnline&&window.HVOnline.session&&window.HVOnline.session.role==='guest');}
+function onlineClone(value,seen=new WeakSet(),depth=0){
+  if(value===null||typeof value!=='object')return typeof value==='function'?undefined:value;
+  if(depth>5||seen.has(value))return undefined;seen.add(value);
+  let out;
+  if(Array.isArray(value)){out=value.slice(0,1500).map(v=>onlineClone(v,seen,depth+1)).filter(v=>v!==undefined);}
+  else{out={};for(const [key,val] of Object.entries(value)){if(['huntTarget','cowTarget','abductingCow','targetPlayer','playerRef'].includes(key))continue;let copy=onlineClone(val,seen,depth+1);if(copy!==undefined)out[key]=copy;}}
+  seen.delete(value);return out;
+}
+function onlineEnsureIds(list,prefix){for(const item of list||[])if(item&&typeof item==='object'&&!item.onlineId)item.onlineId=prefix+'-'+(++onlineLootIdSeq).toString(36);}
+function buildOnlineWorldSnapshot(){
+  onlineEnsureIds(lootDrops,'loot');onlineEnsureIds(animals,'animal');onlineEnsureIds(crops,'crop');
+  const caps={animals:250,enemies:64,jaguars:80,lootDrops:700,crops:1200,donkeys:3,wild:400,smallBirds:100,jungleSnails:12,beachCrabs:24,riverCrocodiles:16,trees:1600,fences:1000,berries:900};
+  const source={animals,enemies,jaguars,lootDrops,crops,donkeys,wild,smallBirds,jungleSnails,beachCrabs,riverCrocodiles,trees,fences,berries};
+  const arrays={};for(const [key,list] of Object.entries(source))arrays[key]=onlineClone((list||[]).slice(0,caps[key]))||[];
+  const snapshot={version:1,seq:++onlineWorldSeq,day,dayTime,arrays,picked:[...picked].slice(0,900),objects:{sheila:onlineClone(sheila),roberto:onlineClone(roberto),npcFarmer:onlineClone(npcFarmer),cemeteryCat:onlineClone(cemeteryCat),llorona:onlineClone(llorona),giantBeachTurtle:onlineClone(giantBeachTurtle),riverSnake:onlineClone(riverSnake),foxActor:onlineClone(foxActor),ufo:onlineClone(ufo),christmasSanta:onlineClone(christmasSanta),christmasGifts:onlineClone(christmasGifts),weather:onlineClone(weather)}};
+  // Keep the relay payload below its 240 KB world-state limit even in unusually dense worlds.
+  const trimOrder=['smallBirds','jungleSnails','beachCrabs','riverCrocodiles','wild','fences','trees','berries','enemies','jaguars','lootDrops','crops','animals','donkeys'];
+  let size=0;try{size=JSON.stringify(snapshot).length;}catch(_){size=Infinity;}
+  for(const key of trimOrder){while(size>230000&&arrays[key].length){arrays[key].splice(Math.floor(arrays[key].length*0.8));try{size=JSON.stringify(snapshot).length;}catch(_){size=Infinity;}}}
+  if(size>230000){snapshot.picked=[];snapshot.objects.christmasGifts=[];for(const key of trimOrder){if(size<=230000)break;arrays[key]=[];try{size=JSON.stringify(snapshot).length;}catch(_){size=Infinity;}}}
+  return snapshot;
+}
+function replaceOnlineArray(target,source,max=2000){if(!Array.isArray(target)||!Array.isArray(source))return;target.splice(0,target.length,...source.slice(0,max));}
+function applyOnlineWorldSnapshot(snapshot){
+  if(!onlineIsGuest()||!snapshot||snapshot.version!==1)return;let seq=Number(snapshot.seq)||0;if(seq&&seq<=lastOnlineWorldAppliedSeq)return;lastOnlineWorldAppliedSeq=seq;
+  const a=snapshot.arrays||{};replaceOnlineArray(animals,a.animals,250);replaceOnlineArray(enemies,a.enemies,64);replaceOnlineArray(jaguars,a.jaguars,80);replaceOnlineArray(lootDrops,a.lootDrops,700);replaceOnlineArray(crops,a.crops,1200);replaceOnlineArray(donkeys,a.donkeys,3);replaceOnlineArray(wild,a.wild,400);replaceOnlineArray(smallBirds,a.smallBirds,100);replaceOnlineArray(jungleSnails,a.jungleSnails,12);replaceOnlineArray(beachCrabs,a.beachCrabs,24);replaceOnlineArray(riverCrocodiles,a.riverCrocodiles,16);replaceOnlineArray(trees,a.trees,1600);replaceOnlineArray(fences,a.fences,1000);replaceOnlineArray(berries,a.berries,900);
+  if(Array.isArray(snapshot.picked)){picked.clear();for(const i of snapshot.picked)if(Number.isInteger(i)&&i>=0&&i<berries.length)picked.add(i);}
+  const o=snapshot.objects||{};if(o.sheila)sheila=o.sheila;if(o.roberto)roberto=o.roberto;if(o.npcFarmer)npcFarmer=o.npcFarmer;if(o.cemeteryCat)cemeteryCat=o.cemeteryCat;if(o.llorona)llorona=o.llorona;if(o.giantBeachTurtle)giantBeachTurtle=o.giantBeachTurtle;if(o.riverSnake)riverSnake=o.riverSnake;if(o.foxActor)foxActor=o.foxActor;if(o.ufo!==undefined)ufo=o.ufo;if(o.christmasSanta!==undefined)christmasSanta=o.christmasSanta;if(Array.isArray(o.christmasGifts))christmasGifts.splice(0,christmasGifts.length,...o.christmasGifts);if(o.weather)weather=Object.assign(weather,o.weather);
+  const nextDay=Number(snapshot.day),nextTime=Number(snapshot.dayTime);if(Number.isSafeInteger(nextDay)&&Number.isFinite(nextTime)&&nextTime>=0&&nextTime<1){if(day!==nextDay){day=nextDay;ui();}window.HVOnline.clock={day:nextDay,dayTime:nextTime};window.HVOnline.clockReceivedAt=performance.now();dayTime=nextTime;}
+}
+function processOnlineWorldActions(){
+  const api=window.HVOnline;if(!api||!api.session||api.session.role!=='host'||!Array.isArray(api.worldActions)||!api.worldActions.length)return;
+  let changed=false;for(const action of api.worldActions.splice(0,16)){if(!action||typeof action!=='object')continue;const id=String(action.entityId||'').slice(0,80);
+    if(action.action==='collect-loot'){let i=lootDrops.findIndex(d=>d&&String(d.onlineId||'')===id);if(i>=0){lootDrops.splice(i,1);changed=true;}}
+    else if(action.action==='pick-berry'){let i=Number(id);if(Number.isInteger(i)&&i>=0&&i<berries.length&&!picked.has(i)){picked.add(i);respawnBerry(i,15000);changed=true;}}
+    else if(action.action==='collect-animal'){let animal=animals.find(a=>a&&String(a.onlineId||'')===id);if(animal&&animal.type==='chicken'&&Number(animal.readyCount||animal.ready)>0){animal.readyCount=Math.max(0,(Number(animal.readyCount)||1)-1);animal.ready=animal.readyCount>0;changed=true;}else if(animal&&animal.type!=='chicken'&&animal.ready){animal.ready=0;animal.cd=500;changed=true;}}
+    else if(action.action==='harvest-crop'){let i=crops.findIndex(p=>p&&String(p.onlineId||'')===id);if(i>=0){crops.splice(i,1);changed=true;}}
+    else if(action.action==='plant-crop'){let x=Number(action.x),y=Number(action.y),type=['strawberry','carrot','grape','rose'].includes(action.cropType)?action.cropType:'';if(type&&Number.isFinite(x)&&Number.isFinite(y)&&x>=0&&x<WW-16&&y>=WT&&y<WB-16&&!crops.some(p=>Math.hypot(p.x-x,p.y-y)<23)){crops.push({x,y,grown:false,cropType:type,plantedAt:Date.now()});changed=true;}}
+    else if(action.action==='cut-tree'){let x=Number(action.x),y=Number(action.y),i=trees.findIndex(t=>Math.round(t[0])===Math.round(x)&&Math.round(t[1])===Math.round(y));if(i>=0){trees.splice(i,1);if(chopAction){if(chopAction.treeIndex===i)chopAction=null;else if(chopAction.treeIndex>i)chopAction.treeIndex--;}changed=true;}}
+    else if(action.action==='add-animal'){let type=['cow','chicken'].includes(action.animalType)?action.animalType:'',x=Number(action.x),y=Number(action.y);if(type&&Number.isFinite(x)&&Number.isFinite(y)&&animals.length<250&&!animals.some(a=>Math.hypot(a.x-x,a.y-y)<18)){let animal={x,y,type,dir:'right',walk:0,frame:0,ready:0,readyCount:type==='chicken'?0:undefined,cd:type==='cow'?0:300,nextEatAt:Date.now()+2500,eatingUntil:0};if(type==='cow'){animal.bornDay=day;animal.nextMilkAt=0;}else animal.nextEggAt=Date.now()+CHICKEN_EGG_INTERVAL_MS;animals.push(animal);changed=true;}}
+  }
+  if(changed)save();
+}
+
 function loop(){
 if(!running)return;resizeGameCanvas();refreshDigControls();if(!inMine)updateWoodCutter();if($('craftMenu').style.display==='block')refreshCraftMenu();if(paused){window._last=performance.now();requestAnimationFrame(loop);return}
 ensureDonkeys();
@@ -6907,7 +6954,8 @@ if(window.HVOnline&&window.HVOnline.session){
     window.HVOnline.sendState({x:Math.round(player.x*10)/10,y:Math.round(player.y*10)/10,dir:player.dir,walking:!!(dx||dy),hidden:!!(inHouse||inBotHouse||inMine||sleeping),cosmeticId:equippedCosmetic,ironHelmet:!!ironHelmet,ironChestplate:!!ironChestplate,ironBoots:!!ironBoots,day,dayTime});
   }
 }
-let now=performance.now(); let delta = (now-(window._last||now))/1000; window._last=now;updateDonkeys(delta);updateHandLampBattery(delta);updateFarmerRobot();updateJungleAmbience(delta);updateAnimalAndSeaAmbience(delta);
+if(window.HVOnline&&window.HVOnline.session){processOnlineWorldActions();if(window.HVOnline.session.role==='host'&&Date.now()-lastOnlineWorldSendAt>=350){lastOnlineWorldSendAt=Date.now();window.HVOnline.sendWorldState(buildOnlineWorldSnapshot());}}
+let now=performance.now(); let delta = (now-(window._last||now))/1000; window._last=now;if(!onlineIsGuest())updateDonkeys(delta);updateHandLampBattery(delta);updateFarmerRobot();updateJungleAmbience(delta);updateAnimalAndSeaAmbience(delta);
 if(bedXolo&&inHouse){bedXolo.x-=3;bedXolo.frame++;if(bedXolo.x+31<-(W-interiorW)/2)bedXolo=null;}
 let inPondNow=!inHouse&&!inBotHouse&&!inMine&&inPond(player.x,player.y),inRiverNow=!inHouse&&!inBotHouse&&!inMine&&inRiver(player.x,player.y),inSeaNow=!inHouse&&!inBotHouse&&!inMine&&inSea(player.x,player.y),inWaterNow=inPondNow||inRiverNow||inSeaNow;
 if(inWaterNow&&!playerWasInWater){playWaterEntry();spawnWaterSplash(player.x+6,player.y+11);if(inPondNow)triggerFishJump(player.x,player.y);}
@@ -6919,7 +6967,7 @@ if(inWaterNow&&(dx||dy)){
 }else waterStep=0;
 for(let i=waterSplashes.length-1;i>=0;i--){let s=waterSplashes[i];s.x+=s.vx;s.y+=s.vy;s.vy+=0.08;s.life--;if(s.life<=0)waterSplashes.splice(i,1);}
 for(let i=bitePixels.length-1;i>=0;i--){let p=bitePixels[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.10;p.life--;if(p.life<=0)bitePixels.splice(i,1);}
-if(window.HVOnline&&window.HVOnline.session&&window.HVOnline.session.role==='guest'&&window.HVOnline.clock){day=window.HVOnline.clock.day;dayTime=window.HVOnline.clock.dayTime;}
+if(window.HVOnline&&window.HVOnline.session&&window.HVOnline.session.role==='guest'&&window.HVOnline.clock){let clock=window.HVOnline.clock,elapsed=Math.max(0,(performance.now()-(window.HVOnline.clockReceivedAt||performance.now()))/1000),clockValue=clock.dayTime+elapsed/dayLength,nextDay=clock.day+Math.floor(clockValue);if(day!==nextDay){day=nextDay;ui();}dayTime=clockValue%1;}
 if(!sleeping){
   if(!(window.HVOnline&&window.HVOnline.session&&window.HVOnline.session.role==='guest')){
     dayTime+=delta/dayLength;
@@ -6928,7 +6976,7 @@ if(!sleeping){
   streetLamp.on=dayTime<0.28 || dayTime>0.82;
   let icon=weather.stormType==='snow'?'❄️':weather.raining?'🌧️':(dayTime<0.25||dayTime>0.8)?lunarEmoji():dayTime<0.35?'🌅':dayTime<0.7?'☀️':'🌇';
   if($('timeIcon')) $('timeIcon').textContent=icon;
-  if(!inMine){updateEnemies(delta*60);updateNahual(delta*60);updateJaguars(delta*60);}
+  if(!inMine&&!onlineIsGuest()){updateEnemies(delta*60);updateNahual(delta*60);updateJaguars(delta*60);}
   if(hasHandLamp && $('lampBtn').style.display==='none') $('lampBtn').style.display='inline-block'; if(hasAxe && $('treeBtn').style.display==='none') $('treeBtn').style.display='inline-block';
 } else {
   sleepTimer+=delta;
@@ -6944,7 +6992,7 @@ if(!sleeping){
     ui();save();
   }
 }
-syncChristmasCalendarEvents(delta);updateRiverVeins();updateUfo(delta);updateCowMilkProduction();updateZombieChickenCombat(delta);if(inMine){updateMine(delta);arrows=[];}else{updateSheila(delta);updateRoberto(delta);updateRobertoWork(delta);updateFireflies(delta);updateCemeteryCat(delta);updateSmallDog(delta);updateBeachCrabs(delta);updateSmallBirds(delta);updateJungleSnails(delta);updateGiantBeachTurtle(delta);updateRiverSnake(delta);updateProjectiles(delta);updateFox(delta);updateWeather(delta);updateLlorona(delta);updateAltarRitual();updateAltarEffects(delta);updateMissionProgress();}updateBotFarmer(delta);syncBackgroundMusic();
+syncChristmasCalendarEvents(delta);updateRiverVeins();if(!onlineIsGuest()){updateUfo(delta);updateCowMilkProduction();updateZombieChickenCombat(delta);}if(inMine){updateMine(delta);arrows=[];}else{if(!onlineIsGuest()){updateSheila(delta);updateRoberto(delta);updateRobertoWork(delta);updateCemeteryCat(delta);updateBeachCrabs(delta);updateSmallBirds(delta);updateJungleSnails(delta);updateGiantBeachTurtle(delta);updateRiverSnake(delta);updateFox(delta);updateLlorona(delta);}updateFireflies(delta);updateSmallDog(delta);updateProjectiles(delta);updateWeather(delta);updateAltarRitual();updateAltarEffects(delta);updateMissionProgress();}if(!onlineIsGuest())updateBotFarmer(delta);syncBackgroundMusic();
 if($('hpBar')){ $('hpBar').style.width=(playerHp/maxHp*100)+'%'; $('hpBar').style.background=playerHp>60?'#2ecc71':playerHp>30?'#f1c40f':'#e74c3c'; }
 if($('hpText')) $('hpText').textContent=playerHp;
 
@@ -6962,7 +7010,7 @@ if(inBotHouse){cam.x=cam.y=0;drawBotHouseInterior();character({drawX:botHousePla
   cam.x=cam.y=0;drawMineRoom();
 } else {
   $('mineBossHud').style.display='none';cam.x=Math.max(0,Math.min(WW-W,player.x-W/2));cam.y=Math.max(WT,Math.min(WB-H,player.y-H/2));
-  if(!sleeping){updateAnimals();updateWild();}
+  if(!sleeping&&!onlineIsGuest()){updateAnimals();updateWild();}
   world();drawCrops();drawBotFarmerCrops();items();riverCrocodiles.forEach(c=>{if(c.state!=='bite')drawRiverCrocodile(c);});
   animals.forEach(a=>drawAnimal(a));
   donkeys.forEach(drawDonkey);
@@ -7140,7 +7188,7 @@ window.HVOnline=(()=>{
       cosmeticId:allowedCosmetics.has(value.cosmeticId)?value.cosmeticId:'',ironHelmet:value.ironHelmet===true,ironChestplate:value.ironChestplate===true,ironBoots:value.ironBoots===true,role:value.role==='guest'?'guest':'host',
       name:String(name||'Jugador').slice(0,16),receivedAt:Date.now()};
   }
-  const api={session:null,remote:null,remoteAction:null,clock:null,onStatus:null,
+  const api={session:null,remote:null,remoteAction:null,clock:null,clockReceivedAt:0,worldState:null,worldActions:[],onWorldState:null,onStatus:null,
     connect(url,request){
       return new Promise((resolve,reject)=>{
         let settled=false,socket;
@@ -7151,19 +7199,21 @@ window.HVOnline=(()=>{
           let m;try{m=JSON.parse(ev.data);}catch(e){return;}
           if(m.type==='error'){if(!settled){settled=true;reject(new Error(m.message||'No se pudo entrar a la sala.'));}else if(api.onStatus)api.onStatus(m.message||'Error de sala.');return;}
           if(m.type==='room-created'||m.type==='room-joined'){
-            api.clock=readClock(m.clock)||(m.type==='room-joined'?readClock(m.hostState):null);
+            api.clock=readClock(m.clock)||(m.type==='room-joined'?readClock(m.hostState):null);if(api.clock)api.clockReceivedAt=performance.now();if(m.type==='room-joined'&&m.worldState)api.worldState=m.worldState;
             if(m.type==='room-joined')api.remote=readAvatar(m.hostState,m.hostName||'Anfitrión');
             api.session={room:m.room,role:m.role,playerId:m.playerId,seed:Number(m.seed)||777,worldName:m.worldName||'Mundo online',peerName:m.hostName||'',connected:true};
             if(!settled){settled=true;resolve(m);}
             if(api.onStatus)api.onStatus(m.type==='room-created'?'Sala lista: '+m.room+' · comparte el código.':'Conectado a la sala '+m.room+'.');
             return;
           }
-          if(m.type==='room-clock'){const clock=readClock(m);if(clock)api.clock=clock;return;}
+          if(m.type==='room-clock'){const clock=readClock(m);if(clock){api.clock=clock;api.clockReceivedAt=performance.now();}return;}
+          if(m.type==='world-state'){if(api.session?.role==='guest'&&m.state){api.worldState=m.state;if(api.onWorldState)api.onWorldState(m.state);}return;}
+          if(m.type==='world-action'){if(api.session?.role==='host'&&Array.isArray(api.worldActions))api.worldActions.push(m);return;}
           if(m.type==='player-joined'){if(api.session){api.session.peerName=m.name||'Jugador';api.session.peerConnected=true;}if(api.onStatus)api.onStatus('Se conectó '+(m.name||'el otro jugador')+'.');return;}
           if(m.type==='player-left'){api.remote=null;if(api.session){api.session.peerConnected=false;api.session.peerName='';}if(api.onStatus)api.onStatus('El otro jugador salió. La sala queda abierta.');return;}
           if(m.type==='player-state'){
             api.remote={...(api.remote||{}),...readAvatar(m,m.name),drawX:api.remote?.drawX,drawY:api.remote?.drawY};
-            if(api.session?.role==='guest'){const clock=readClock(m);if(clock)api.clock=clock;}
+            if(api.session?.role==='guest'){const clock=readClock(m);if(clock){api.clock=clock;api.clockReceivedAt=performance.now();}}
             if(api.session){api.session.peerConnected=true;api.session.peerName=api.remote.name;}
             if(api.onStatus)api.onStatus('Conectado: '+(api.remote.name||'jugador'));
             return;
@@ -7176,19 +7226,21 @@ window.HVOnline=(()=>{
     },
     sendState(state){if(ws&&ws.readyState===WebSocket.OPEN&&api.session)ws.send(JSON.stringify({type:'state',...state}));},
     sendAction(action){let now=Date.now();if(now-lastActionAt<140)return;lastActionAt=now;if(ws&&ws.readyState===WebSocket.OPEN&&api.session)ws.send(JSON.stringify({type:'action',action:action==='B'?'B':'A'}));},
-    disconnect(){let socket=ws;ws=null;api.remote=null;api.remoteAction=null;api.clock=null;api.session=null;if(socket&&socket.readyState===WebSocket.OPEN){try{socket.send(JSON.stringify({type:'leave'}));}catch(e){}socket.close();}if(api.onStatus)api.onStatus('Desconectado.');}
+    sendWorldState(state){if(ws&&ws.readyState===WebSocket.OPEN&&api.session?.role==='host')ws.send(JSON.stringify({type:'world-state',state}));},
+    sendWorldAction(action,data={}){if(ws&&ws.readyState===WebSocket.OPEN&&api.session?.role==='guest')ws.send(JSON.stringify({type:'world-action',action,...data}));},
+    disconnect(){let socket=ws;ws=null;api.remote=null;api.remoteAction=null;api.clock=null;api.clockReceivedAt=0;api.worldState=null;api.worldActions=[];api.session=null;if(socket&&socket.readyState===WebSocket.OPEN){try{socket.send(JSON.stringify({type:'leave'}));}catch(e){}socket.close();}if(api.onStatus)api.onStatus('Desconectado.');}
   };
   return api;
 })();
 function positionOnlineRoomBadge(){if(!onlineRoomBadge||onlineRoomBadge.style.display==='none')return;let hud=$('hud');if(!hud)return;let r=hud.getBoundingClientRect();onlineRoomBadge.style.top=Math.round(r.bottom+4)+'px';}
 function paintOnlineStatus(text){if(onlineLobbyStatus&&onlineLobby.style.display==='flex')onlineLobbyStatus.textContent=text;let session=window.HVOnline.session;if(onlineRoomBadge&&session){let wasHidden=onlineRoomBadge.style.display==='none'||!onlineRoomBadge.style.display;onlineRoomBadge.style.display='flex';$('onlineRoomLabel').textContent=session.room;$('onlinePeerStatus').textContent=session.connected===false?'Sin conexión':session.peerConnected?'En línea':'Esperando';if(wasHidden)requestAnimationFrame(positionOnlineRoomBadge);}else if(onlineRoomBadge)onlineRoomBadge.style.display='none';}
 window.addEventListener('resize',positionOnlineRoomBadge);
-window.HVOnline.onStatus=paintOnlineStatus;
+window.HVOnline.onStatus=paintOnlineStatus;window.HVOnline.onWorldState=applyOnlineWorldSnapshot;
 $('lbOnline').onclick=()=>{onlineLobbyStatus.textContent='Servidor configurado. Crea una sala o escribe el código que te compartieron.';onlineLobby.style.display='flex';};
 $('onlineLobbyBack').onclick=()=>{onlineLobby.style.display='none';};
 $('onlineCopyRoom').onclick=async()=>{let code=window.HVOnline.session?.room;if(!code)return;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(code);else throw new Error('clipboard unavailable');$('onlinePeerStatus').textContent='Código copiado';}catch(e){try{let t=document.createElement('textarea');t.value=code;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();let copied=document.execCommand('copy');t.remove();$('onlinePeerStatus').textContent=copied?'Código copiado':'Código: '+code;}catch(_){$('onlinePeerStatus').textContent='Código: '+code;}}};
-$('onlineHost').onclick=async()=>{let btn=$('onlineHost'),id=null;btn.disabled=true;onlineLobbyStatus.textContent='Creando sala…';let name=HVD.getName().trim()||'Granjero';HVD.setName(name);nameIn.value=name;try{id=HVD.createWorld();let store=HVD.worldStorage(id),seed=Number(store.hvd_seed)||777;let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'host',name,seed,worldName:'Harvest Valley'});HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';enter(id);}catch(e){if(id)HVD.deleteWorld(id);onlineLobbyStatus.textContent=e?.message||'No se pudo crear la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
-$('onlineJoin').onclick=async()=>{let btn=$('onlineJoin');btn.disabled=true;onlineLobbyStatus.textContent='Buscando la sala…';let name=HVD.getName().trim()||'Granjero',room=$('onlineRoomCode').value.trim().toUpperCase();HVD.setName(name);nameIn.value=name;try{let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'join',room,name});let id=HVD.createWorld(),store=HVD.worldStorage(id);store.hvd_seed=Number(info.seed)||777;HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';enter(id);}catch(e){onlineLobbyStatus.textContent=e?.message||'No se pudo entrar a la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
+$('onlineHost').onclick=async()=>{let btn=$('onlineHost'),id=null;btn.disabled=true;onlineLobbyStatus.textContent='Creando sala…';let name=HVD.getName().trim()||'Granjero';HVD.setName(name);nameIn.value=name;try{id=HVD.createWorld();let store=HVD.worldStorage(id),seed=Number(store.hvd_seed)||777;let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'host',name,seed,worldName:'Harvest Valley',day,dayTime});HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';enter(id);if(window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){if(id)HVD.deleteWorld(id);onlineLobbyStatus.textContent=e?.message||'No se pudo crear la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
+$('onlineJoin').onclick=async()=>{let btn=$('onlineJoin');btn.disabled=true;onlineLobbyStatus.textContent='Buscando la sala…';let name=HVD.getName().trim()||'Granjero',room=$('onlineRoomCode').value.trim().toUpperCase();HVD.setName(name);nameIn.value=name;try{let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'join',room,name});let id=HVD.createWorld(),store=HVD.worldStorage(id);store.hvd_seed=Number(info.seed)||777;HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';enter(id);if(window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){onlineLobbyStatus.textContent=e?.message||'No se pudo entrar a la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
 
 // ---- volumen (lobby y pausa comparten el mismo valor) ----
 const paints=[];const sync=()=>paints.forEach(p=>p());
