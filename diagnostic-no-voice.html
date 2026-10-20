@@ -7167,14 +7167,16 @@ return {
 };
 };
 </script>
-<script>
+<script>window.__HV_DIAG={boot:[],errors:[],events:[]};window.addEventListener('error',e=>window.__HV_DIAG.errors.push((e.message||'error')+' @ '+(e.lineno||0)));window.addEventListener('unhandledrejection',e=>window.__HV_DIAG.errors.push('promise: '+String(e.reason&&e.reason.message||e.reason)));['pointerup','touchend','click'].forEach(t=>document.addEventListener(t,e=>{const el=e.target;window.__HV_DIAG.events.push(t+':'+(el&&el.id||el&&el.tagName||'?'));if(window.__HV_DIAG.events.length>12)window.__HV_DIAG.events.shift()},true));</script><script>
 (()=>{
+window.__HV_DIAG.boot.push('main-enter');
 const $=id=>document.getElementById(id);
 let game=null,pauseBackupDownloaded=false;
 const lobby=$('lobby'),worlds=$('worlds'),pause=$('pauseMenu'),nameIn=$('nameIn'),hint=$('musicHint'),lobbyStartStatus=$('lobbyStartStatus');
 let enteringWorld=false;
 function bindMobileTap(el,handler){if(!el)return;let last=0;const fire=e=>{const now=Date.now();if(now-last<500)return;last=now;if(e&&e.cancelable&&e.type!=='click')e.preventDefault();handler(e);};el.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen')fire(e);},{passive:false});el.addEventListener('touchend',fire,{passive:false});el.addEventListener('click',fire);}
 HVD.importLegacy();
+window.__HV_DIAG.boot.push('legacy-ok');
 nameIn.value=HVD.getName();
 nameIn.oninput=()=>HVD.setName(nameIn.value);
 const onlineLobby=$('onlineLobby'),onlineLobbyStatus=$('onlineLobbyStatus'),onlineRoomBadge=$('onlineRoomBadge');
@@ -7246,10 +7248,12 @@ $('onlineCopyRoom').onclick=async()=>{let code=window.HVOnline.session?.room;if(
 bindMobileTap($('onlineHost'),async()=>{let btn=$('onlineHost'),id=null;btn.disabled=true;onlineLobbyStatus.textContent='Creando sala…';let name=HVD.getName().trim()||'Granjero';HVD.setName(name);nameIn.value=name;try{id=HVD.createWorld();let store=HVD.worldStorage(id),seed=Number(store.hvd_seed)||777;let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'host',name,seed,worldName:'Harvest Valley',day,dayTime});HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';if(await enter(id)&&window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){if(id)HVD.deleteWorld(id);onlineLobbyStatus.textContent=e?.message||'No se pudo crear la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}});
 bindMobileTap($('onlineJoin'),async()=>{let btn=$('onlineJoin');btn.disabled=true;onlineLobbyStatus.textContent='Buscando la sala…';let name=HVD.getName().trim()||'Granjero',room=$('onlineRoomCode').value.trim().toUpperCase();HVD.setName(name);nameIn.value=name;try{let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'join',room,name});let id=HVD.createWorld(),store=HVD.worldStorage(id);store.hvd_seed=Number(info.seed)||777;HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';if(await enter(id)&&window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){onlineLobbyStatus.textContent=e?.message||'No se pudo entrar a la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}});
 
+window.__HV_DIAG.boot.push('online-init-ok');
 // ---- volumen (lobby y pausa comparten el mismo valor) ----
 const paints=[];const sync=()=>paints.forEach(p=>p());
 [$('volLobby'),$('volPause')].forEach(tr=>paints.push(HVD.slider(tr,()=>HVD.getVolume(),v=>{HVD.setVolume(v);sync()},()=>HVD.tone(660,0.12,'square',0.15))));
 
+window.__HV_DIAG.boot.push('sliders-ok');
 // ---- fondo del lobby: estrellas, luna, luciérnagas y siluetas de pinos ----
 const bg=$('lobbyBg'),bx=bg.getContext('2d');const SC=3;
 const lobbyBrand=$('lobbyBrand'),lobbyTitle=$('lobbyTitle'),lobbySub=$('lobbySub'),lobbyM=$('lobbyM'),lobbyO=$('lobbyO'),lobbyMascots=$('lobbyMascots'),lobbyMascotCtx=lobbyMascots.getContext('2d');
@@ -7313,10 +7317,11 @@ function frame(t){
       bx.fillStyle='rgba(232,242,106,'+(0.4+0.6*a).toFixed(2)+')';bx.fillRect(x|0,y|0,1,1);
     });
     drawLobbyMascots(t);
-  }catch(e){console.error('La animación del lobby se detuvo:',e);anim=false;return;}
+  }catch(e){window.__HV_DIAG.errors.push('frame: '+String(e&&e.message||e));console.error('La animación del lobby se detuvo:',e);anim=false;return;}
   if(anim)requestAnimationFrame(frame);
 }
 function startLobby(){
+  window.__HV_DIAG.boot.push('startLobby-enter');
   lobby.style.display='flex';nameIn.value=HVD.getName();sync();if(lobbyStartStatus)lobbyStartStatus.style.display='none';
   if(!anim){anim=true;resizeBg();resizeLobbyMascots();lobbyMascotStart=performance.now()||1;lobbyLastBark=-1;lobbyAnimation=Math.floor(Math.random()*4);lobbyM.style.visibility='visible';frame(lobbyMascotStart)}
   HVD.music.start();
@@ -7414,6 +7419,7 @@ function exitToLobby(){
   pause.style.display='none';
   startLobby();
 }
+window.__HV_DIAG.boot.push('handlers-binding');
 bindMobileTap($('lbNew'),()=>{HVD.tone(784,0.1,'square',0.18);enter(HVD.createWorld())});
 bindMobileTap($('lbLoad'),()=>{HVD.tone(659,0.1,'square',0.18);renderWorlds();worlds.style.display='flex'});
 bindMobileTap($('worldsBack'),()=>{worlds.style.display='none'});
@@ -7437,7 +7443,8 @@ window.addEventListener('pagehide',()=>{if(game)game.save();});
 setInterval(()=>{hint.style.visibility=(lobby.style.display!=='none'&&HVD.audioState()!=='running')?'visible':'hidden'},400);
 
 startLobby();
+window.__HV_DIAG.boot.push('init-complete');
 })();
 
 </script><div id="botChestOverlay" class="bot-chest-overlay" role="presentation" aria-hidden="true"><section class="bot-chest-card" role="dialog" aria-modal="true" aria-labelledby="botChestHeading"><header class="bot-chest-head"><div><h2 id="botChestHeading">Cofre del granjero</h2><p>Inventario personal · solo consulta</p></div><button class="bot-chest-close" type="button" onclick="window.closeBotChestTab()" aria-label="Cerrar pestaña del cofre">A · Cerrar</button></header><div id="botChestTotal" class="bot-chest-total"></div><div id="botChestItems" class="bot-chest-items"></div><footer class="bot-chest-foot">No puedes sacar ni dejar objetos · Pulsa A para cerrar</footer></section></div>
-</body></html>
+<script>(function(){const box=document.createElement('div');box.id='hvDiagBox';box.style.cssText='position:fixed;left:2px;top:2px;z-index:2147483647;max-width:98vw;max-height:24vh;overflow:hidden;padding:4px 6px;background:#111e;color:#c8ff9a;font:9px monospace;white-space:pre-wrap;pointer-events:none';document.documentElement.appendChild(box);setInterval(()=>{const d=window.__HV_DIAG||{};box.textContent='DIAG '+(d.boot||[]).join(' > ')+' | ERR '+(d.errors||[]).join(' / ')+' | EVT '+(d.events||[]).slice(-6).join(' , ')},250)})();</script></body></html>
