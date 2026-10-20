@@ -9,6 +9,7 @@ const MAX_ROOMS = Number(process.env.MAX_ROOMS) || 500;
 const rooms = new Map();
 const MAX_MESSAGE_BYTES = 262144;
 const MAX_WORLD_STATE_BYTES = 240000;
+const MAX_VOICE_SIGNAL_BYTES = 16000;
 const clients = new Map();
 const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
@@ -198,6 +199,26 @@ function relayWorldAction(ws, message) {
   send(room.host.ws, payload);
 }
 
+function relayVoiceSignal(ws, message) {
+  const client = clients.get(ws);
+  if (!client) return;
+  const room = rooms.get(client.room);
+  if (!room) return;
+  const signal = message.signal;
+  if (!signal || typeof signal !== 'object' || Array.isArray(signal)) return;
+  const allowed = new Set(['ready','offer','answer','candidate','hangup']);
+  if (!allowed.has(String(signal.type || ''))) return;
+  const now = Date.now();
+  if (signal.type === 'candidate' && now - (client.lastVoiceSignalAt || 0) < 10) return;
+  if (signal.type === 'candidate') client.lastVoiceSignalAt = now;
+  let encoded;
+  try { encoded = JSON.stringify(signal); } catch (_) { return fail(ws, 'La señal de voz no es válida.'); }
+  if (Buffer.byteLength(encoded, 'utf8') > MAX_VOICE_SIGNAL_BYTES) return fail(ws, 'La señal de voz es demasiado grande.');
+  let clean;
+  try { clean = JSON.parse(encoded); } catch (_) { return fail(ws, 'La señal de voz no es válida.'); }
+  for (const [peer] of room.players) if (peer !== ws) send(peer, { type: 'voice-signal', role: client.role, signal: clean });
+}
+
 function relayAction(ws, message) {
   const client = clients.get(ws);
   if (!client) return;
@@ -221,6 +242,7 @@ wss.on('connection', ws => {
     if (message.type === 'state') return relayState(ws, message);
     if (message.type === 'world-state') return relayWorldState(ws, message);
     if (message.type === 'world-action') return relayWorldAction(ws, message);
+    if (message.type === 'voice-signal') return relayVoiceSignal(ws, message);
     if (message.type === 'action') return relayAction(ws, message);
     if (message.type === 'leave') { try { ws.close(); } catch (_) {} return; }
     fail(ws, 'Tipo de mensaje no reconocido.');
