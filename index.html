@@ -347,6 +347,7 @@ button:focus-visible{
 .vthumb{position:absolute;top:-6px;width:16px;height:26px;margin-left:-8px;background:#fff2c7;border:2px solid #816747;border-radius:6px;box-shadow:0 2px 0 #0004}
 .vnum{min-width:28px;text-align:right;font-size:13px}
 #musicHint{color:#9fbf8f;font-size:11px;letter-spacing:1px;text-shadow:0 1px 0 #000}
+#lobbyStartStatus{display:none;max-width:min(420px,90vw);margin:4px auto 0;padding:7px 10px;border:2px solid #d4a84a;border-radius:7px;background:#17231e;color:#ffe28a;text-align:center;font:11px/1.4 monospace;white-space:normal}
 #worlds{display:none;position:absolute;left:0;top:0;width:100%;height:100%;background:#000c;z-index:110;align-items:center;justify-content:center}
 #worlds .card{width:min(440px,94vw);max-height:90vh;overflow-y:auto;touch-action:pan-y;background:#0f172a;border:4px solid #38bdf8;box-shadow:0 0 15px #38bdf844, inset 0 0 10px #000;color:#f8fafc;font-family:'Courier New',monospace;}
 .wrow{display:flex;align-items:center;gap:8px;padding:10px;background:#1e293b;border:2px solid #8b5cf6;border-radius:6px;box-shadow:2px 2px 0 #000;}
@@ -577,7 +578,7 @@ body.bot-house-interior #hud,body.bot-house-interior #weaponHud{display:none!imp
 <div class="card"><label for="nameIn">👤 Tu nombre</label><input id="nameIn" maxlength="12" placeholder="Granjero" autocomplete="off" spellcheck="false"></div>
 <div class="card"><label>🔊 Volumen</label><div class="vol"><div class="vtrack" id="volLobby"><div class="vfill"></div><div class="vthumb"></div></div><b class="vnum"></b></div></div>
 </div>
-<div id="musicHint">♪ Toca la pantalla para activar la música</div>
+<div id="musicHint">♪ Toca la pantalla para activar la música</div><div id="lobbyStartStatus" role="status" aria-live="polite"></div>
 </div>
 <div id="onlineLobby"><div class="card"><h2>🌐 Partida privada · beta</h2><p>El servidor ya está configurado. Crea una sala y comparte el código; la otra persona solo tendrá que escribirlo.</p><input id="onlineServerUrl" type="hidden" value="wss://valley-mexico.onrender.com"><button id="onlineHost" style="background:#4c9147">Crear sala y mundo nuevo</button><label for="onlineRoomCode">Código de sala</label><input id="onlineRoomCode" maxlength="8" placeholder="Código que te compartieron" autocomplete="off" spellcheck="false"><button id="onlineJoin" style="background:#397eb4">Unirme a la sala</button><div id="onlineLobbyStatus" role="status">Listo para conectar con el servidor del juego.</div><button id="onlineLobbyBack" style="background:#61584b">Volver</button></div></div>
 <div id="worlds"><div class="card"><h2 style="margin:0;font-size:20px">📂 Mundos guardados</h2><p style="font-size:10px;line-height:1.35;margin:5px 0;color:#d6deea">Respalda tus mundos para transferirlos entre archivos o navegadores.</p><div style="display:flex;gap:7px;margin:7px 0"><button id="exportBackup" style="flex:1;height:36px;background:#397eb4;border-radius:6px;font-size:11px">⬇ Exportar respaldo</button><button id="importBackup" style="flex:1;height:36px;background:#4c9147;border-radius:6px;font-size:11px">⬆ Importar respaldo</button></div><input id="backupFile" type="file" accept=".json,application/json" style="display:none"><div id="backupStatus" style="font-size:9px;line-height:1.3;color:#d6deea;margin-bottom:5px"></div><div id="worldList"></div><button id="worldsBack" style="width:100%;background:#61584b">Volver</button></div></div>
@@ -7174,7 +7175,8 @@ return {
 (()=>{
 const $=id=>document.getElementById(id);
 let game=null,pauseBackupDownloaded=false;
-const lobby=$('lobby'),worlds=$('worlds'),pause=$('pauseMenu'),nameIn=$('nameIn'),hint=$('musicHint');
+const lobby=$('lobby'),worlds=$('worlds'),pause=$('pauseMenu'),nameIn=$('nameIn'),hint=$('musicHint'),lobbyStartStatus=$('lobbyStartStatus');
+let enteringWorld=false;
 HVD.importLegacy();
 nameIn.value=HVD.getName();
 nameIn.oninput=()=>HVD.setName(nameIn.value);
@@ -7269,8 +7271,8 @@ $('onlineVoiceStart').onclick=()=>window.HVVoice.start();$('onlineVoiceMute').on
 $('lbOnline').onclick=()=>{onlineLobbyStatus.textContent='Servidor configurado. Crea una sala o escribe el código que te compartieron.';onlineLobby.style.display='flex';};
 $('onlineLobbyBack').onclick=()=>{onlineLobby.style.display='none';};
 $('onlineCopyRoom').onclick=async()=>{let code=window.HVOnline.session?.room;if(!code)return;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(code);else throw new Error('clipboard unavailable');$('onlinePeerStatus').textContent='Código copiado';}catch(e){try{let t=document.createElement('textarea');t.value=code;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();let copied=document.execCommand('copy');t.remove();$('onlinePeerStatus').textContent=copied?'Código copiado':'Código: '+code;}catch(_){$('onlinePeerStatus').textContent='Código: '+code;}}};
-$('onlineHost').onclick=async()=>{let btn=$('onlineHost'),id=null;btn.disabled=true;onlineLobbyStatus.textContent='Creando sala…';let name=HVD.getName().trim()||'Granjero';HVD.setName(name);nameIn.value=name;try{id=HVD.createWorld();let store=HVD.worldStorage(id),seed=Number(store.hvd_seed)||777;let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'host',name,seed,worldName:'Harvest Valley',day,dayTime});HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';enter(id);if(window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){if(id)HVD.deleteWorld(id);onlineLobbyStatus.textContent=e?.message||'No se pudo crear la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
-$('onlineJoin').onclick=async()=>{let btn=$('onlineJoin');btn.disabled=true;onlineLobbyStatus.textContent='Buscando la sala…';let name=HVD.getName().trim()||'Granjero',room=$('onlineRoomCode').value.trim().toUpperCase();HVD.setName(name);nameIn.value=name;try{let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'join',room,name});let id=HVD.createWorld(),store=HVD.worldStorage(id);store.hvd_seed=Number(info.seed)||777;HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';enter(id);if(window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){onlineLobbyStatus.textContent=e?.message||'No se pudo entrar a la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
+$('onlineHost').onclick=async()=>{let btn=$('onlineHost'),id=null;btn.disabled=true;onlineLobbyStatus.textContent='Creando sala…';let name=HVD.getName().trim()||'Granjero';HVD.setName(name);nameIn.value=name;try{id=HVD.createWorld();let store=HVD.worldStorage(id),seed=Number(store.hvd_seed)||777;let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'host',name,seed,worldName:'Harvest Valley',day,dayTime});HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';if(await enter(id)&&window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){if(id)HVD.deleteWorld(id);onlineLobbyStatus.textContent=e?.message||'No se pudo crear la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
+$('onlineJoin').onclick=async()=>{let btn=$('onlineJoin');btn.disabled=true;onlineLobbyStatus.textContent='Buscando la sala…';let name=HVD.getName().trim()||'Granjero',room=$('onlineRoomCode').value.trim().toUpperCase();HVD.setName(name);nameIn.value=name;try{let info=await window.HVOnline.connect($('onlineServerUrl').value,{type:'join',room,name});let id=HVD.createWorld(),store=HVD.worldStorage(id);store.hvd_seed=Number(info.seed)||777;HVD.touch(id,{name:'Sala '+info.room,player:name});onlineLobby.style.display='none';if(await enter(id)&&window.HVOnline.worldState)applyOnlineWorldSnapshot(window.HVOnline.worldState);}catch(e){onlineLobbyStatus.textContent=e?.message||'No se pudo entrar a la sala.';window.HVOnline.disconnect();}finally{btn.disabled=false;}};
 
 // ---- volumen (lobby y pausa comparten el mismo valor) ----
 const paints=[];const sync=()=>paints.forEach(p=>p());
@@ -7326,26 +7328,30 @@ function drawCatChaseScene(elapsed,m){let left=Math.max(12,m.titleLeft-15),right
 function drawLobbyMascots(t){if(!lobbyMascotStart)return;let elapsed=Math.max(0,(t-lobbyMascotStart)/1000);if(lobbyAnimation===0){lobbyM.style.visibility='visible';drawDogButterflyScene(t);return;}lobbyMascotCtx.clearRect(0,0,lobbyMascotWidth,lobbyMascotHeight);if(lobbyAnimation!==1)lobbyM.style.visibility='visible';let m=lobbyGeometry();if(lobbyAnimation===1)drawLobbyUfoScene(elapsed,m);else if(lobbyAnimation===2)drawLloronaScene(elapsed,m);else drawCatChaseScene(elapsed,m);}
 function frame(t){
   if(!anim)return;
-  const w=bg.width,h=bg.height;
-  bx.fillStyle='#000';bx.fillRect(0,0,w,h);
-  stars.forEach(o=>{const a=0.35+0.65*Math.abs(Math.sin(t/900*o.s+o.p));bx.fillStyle='rgba(255,255,230,'+a.toFixed(2)+')';bx.fillRect(o.x|0,o.y|0,1,1)});
-  bx.fillStyle='#e6e6c8';bx.beginPath();bx.arc(w-26,22,6,0,Math.PI*2);bx.fill();
-  bx.fillStyle='#000';bx.beginPath();bx.arc(w-23,20,5,0,Math.PI*2);bx.fill();
-  if(sil)bx.drawImage(sil,0,0);
-  flies.forEach(f=>{
-    const x=f.x+Math.sin(t/1700*f.s+f.p)*6,y=f.y+Math.cos(t/1300*f.s+f.p)*4,a=0.5+0.5*Math.sin(t/500+f.p);
-    bx.fillStyle='rgba(232,242,106,'+(0.12*a).toFixed(2)+')';bx.fillRect((x|0)-1,(y|0)-1,3,3);
-    bx.fillStyle='rgba(232,242,106,'+(0.4+0.6*a).toFixed(2)+')';bx.fillRect(x|0,y|0,1,1);
-  });
-  drawLobbyMascots(t);
-  requestAnimationFrame(frame);
+  try{
+    const w=bg.width,h=bg.height;
+    bx.fillStyle='#000';bx.fillRect(0,0,w,h);
+    stars.forEach(o=>{const a=0.35+0.65*Math.abs(Math.sin(t/900*o.s+o.p));bx.fillStyle='rgba(255,255,230,'+a.toFixed(2)+')';bx.fillRect(o.x|0,o.y|0,1,1)});
+    bx.fillStyle='#e6e6c8';bx.beginPath();bx.arc(w-26,22,6,0,Math.PI*2);bx.fill();
+    bx.fillStyle='#000';bx.beginPath();bx.arc(w-23,20,5,0,Math.PI*2);bx.fill();
+    if(sil)bx.drawImage(sil,0,0);
+    flies.forEach(f=>{
+      const x=f.x+Math.sin(t/1700*f.s+f.p)*6,y=f.y+Math.cos(t/1300*f.s+f.p)*4,a=0.5+0.5*Math.sin(t/500+f.p);
+      bx.fillStyle='rgba(232,242,106,'+(0.12*a).toFixed(2)+')';bx.fillRect((x|0)-1,(y|0)-1,3,3);
+      bx.fillStyle='rgba(232,242,106,'+(0.4+0.6*a).toFixed(2)+')';bx.fillRect(x|0,y|0,1,1);
+    });
+    drawLobbyMascots(t);
+  }catch(e){console.error('La animación del lobby se detuvo:',e);anim=false;return;}
+  if(anim)requestAnimationFrame(frame);
 }
 function startLobby(){
-  lobby.style.display='flex';nameIn.value=HVD.getName();sync();
-  if(!anim){anim=true;resizeBg();resizeLobbyMascots();lobbyMascotStart=performance.now();lobbyLastBark=-1;lobbyAnimation=Math.floor(Math.random()*4);lobbyM.style.visibility='visible';requestAnimationFrame(frame)}
+  lobby.style.display='flex';nameIn.value=HVD.getName();sync();if(lobbyStartStatus)lobbyStartStatus.style.display='none';
+  if(!anim){anim=true;resizeBg();resizeLobbyMascots();lobbyMascotStart=performance.now()||1;lobbyLastBark=-1;lobbyAnimation=Math.floor(Math.random()*4);lobbyM.style.visibility='visible';frame(lobbyMascotStart)}
   HVD.music.start();
 }
 window.addEventListener('resize',()=>{if(anim){resizeBg();resizeLobbyMascots()}});
+window.addEventListener('pageshow',()=>{if(lobby.style.display!=='none'&&!anim)startLobby()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&lobby.style.display!=='none'&&!anim)startLobby()});
 
 // ---- lista de mundos guardados ----
 function el(tag,txt,css){const e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(css)e.style.cssText=css;return e}
@@ -7402,12 +7408,28 @@ $('backupFile').onchange=e=>{
 };
 
 // ---- entrar / salir del juego ----
-function enter(id){
-  if(!HVD.getName()){HVD.setName('Granjero');nameIn.value='Granjero'}
-  HVD.unlock();
-  worlds.style.display='none';lobby.style.display='none';anim=false;
-  HVD.music.stop();
-  game=window.startHVD(id);
+async function enter(id){
+  if(enteringWorld)return false;
+  enteringWorld=true;
+  try{
+    if(!HVD.getName()){HVD.setName('Granjero');nameIn.value='Granjero'}
+    worlds.style.display='none';
+    startLobby();
+    if(lobbyStartStatus){lobbyStartStatus.textContent='Preparando tu mundo…';lobbyStartStatus.style.display='block';}
+    await new Promise(resolve=>requestAnimationFrame(()=>resolve()));
+    HVD.unlock();HVD.music.stop();
+    const started=window.startHVD(id);
+    if(!started||typeof started.stop!=='function')throw new Error('El mundo no pudo completar el inicio.');
+    game=started;lobby.style.display='none';anim=false;worlds.style.display='none';
+    if(lobbyStartStatus)lobbyStartStatus.style.display='none';
+    return true;
+  }catch(err){
+    console.error('No se pudo iniciar Harvest Valley:',err);
+    if(game){try{game.stop();}catch(_){}}
+    game=null;lobby.style.display='flex';worlds.style.display='none';anim=false;startLobby();
+    if(lobbyStartStatus){let detail=String(err&&err.message||'Error inesperado').slice(0,140);lobbyStartStatus.textContent='No se pudo iniciar el mundo: '+detail;lobbyStartStatus.style.display='block';}
+    return false;
+  }finally{enteringWorld=false;}
 }
 function exitToLobby(){
   if(game){
