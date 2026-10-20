@@ -329,6 +329,29 @@ button:focus-visible{
 #lobbyBg{position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;image-rendering:pixelated}
 #lobbyWrap{position:relative;z-index:2;width:min(540px,94vw);display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:auto}
 #lobby button{pointer-events:auto;touch-action:manipulation}
+#lobbyProfileArea{position:relative;z-index:20;width:min(320px,94vw);display:flex;justify-content:center;margin-top:-3px}
+#profileToggle{box-sizing:border-box;width:100%;min-height:70px;padding:7px 10px;display:flex;align-items:center;gap:10px;text-align:left;background:#1c3022;color:#fff1c4;border:3px solid #d4a84a;box-shadow:0 4px 0 #0007}
+#profileAvatarFrame{position:relative;display:block;flex:0 0 48px;width:48px;height:48px;box-sizing:border-box;border:3px solid #f1d482;background:#293e2d;box-shadow:inset 0 0 0 2px #64482b;image-rendering:pixelated}
+#profileAvatarFallback,#profilePhotoPreview{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);image-rendering:pixelated}
+#profilePhotoPreview{display:none;object-fit:cover}
+#profileIdentity{min-width:0;display:flex;flex:1;flex-direction:column;gap:3px}
+#profileIdentity small{color:#c5d8b5;font:9px monospace;letter-spacing:1px}
+#profileNickname{max-width:205px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#ffe28a;font:700 13px 'Courier New',monospace}
+#profileChevron{color:#ffe28a;font-size:12px}
+#profileMenu{display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:25;padding:6px;background:#111d20f5;border:2px solid #d4a84a;box-shadow:0 4px 10px #0009}
+#profileMenu button{width:100%;min-height:38px;background:#397eb4}
+#lobbyVolumeGrid{display:flex;justify-content:center;width:100%}
+#lobbyVolumeGrid .card{box-sizing:border-box;width:min(240px,94vw)}
+#accountsPanel{display:none;position:absolute;inset:0;z-index:120;align-items:center;justify-content:center;box-sizing:border-box;padding:12px;background:#000c}
+#accountsPanel .accountCard{box-sizing:border-box;width:min(390px,92vw);max-height:90vh;overflow:auto;padding:12px;background:#18251f;border:3px solid #d4a84a;border-radius:4px;box-shadow:0 0 0 2px #563b25,0 6px 18px #0009;color:#f6e6bd;font-family:'Courier New',monospace}
+#accountsPanel h2{margin:0 0 12px;color:#ffe28a;font:900 14px/1.35 'Courier New',monospace;text-align:center}
+#accountsPanel label{display:block;margin:8px 0 5px;color:#e7ddb8;font:bold 11px monospace}
+#accountsPanel .accountButtons{display:flex;gap:8px;margin-top:8px}
+#accountsPanel .accountButtons button{flex:1;min-height:38px;padding:5px;font-size:9px!important}
+#accountsPanel .accountNote{margin:7px 0;color:#c5d8b5;font:10px/1.4 monospace}
+#profileAccountStatus{min-height:30px;margin:8px 0;color:#ffe28a;font:10px/1.4 monospace;white-space:normal}
+#accountsPanel #closeAccounts{width:100%;min-height:38px;background:#61584b}
+@media(max-height:700px){#lobbyWrap{gap:7px}#profileToggle{min-height:58px}#profileAvatarFrame{width:42px;height:42px;flex-basis:42px}}
 #lobbyTitle{margin:0;text-align:center;font:900 clamp(26px,8vw,46px)/1 'Courier New',monospace;color:#ffe28a;letter-spacing:2px;text-shadow:0 3px 0 #b8442b,0 6px 0 #8b5937,0 10px 0 #0009}
 #lobbySub{margin:-2px 0 2px;color:#d9f1c5;font-size:12px;letter-spacing:6px;text-shadow:0 2px 0 #000}
 #lobbyBrand{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -573,14 +596,16 @@ body.bot-house-interior #hud,body.bot-house-interior #weaponHud{display:none!imp
 <div id="lobby"><canvas id="lobbyBg"></canvas>
 <div id="lobbyWrap">
 <div id="lobbyBrand"><h1 id="lobbyTitle">🏡 Harvest Valley</h1><p id="lobbySub"><span id="lobbyM">M</span> É X I C <span id="lobbyO">O</span></p><canvas id="lobbyMascots" aria-hidden="true"></canvas></div>
+<div id="lobbyProfileArea">
+<button id="profileToggle" type="button" aria-expanded="false" aria-controls="profileMenu"><span id="profileAvatarFrame"><svg id="profileAvatarFallback" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="4" fill="#e7c27a"/><rect x="5" y="6" width="6" height="4" fill="#8c6038"/><rect x="3" y="7" width="2" height="4" fill="#d2a95f"/><rect x="11" y="7" width="2" height="4" fill="#d2a95f"/><rect x="5" y="10" width="3" height="4" fill="#465c43"/><rect x="8" y="10" width="3" height="4" fill="#465c43"/><rect x="4" y="14" width="4" height="1" fill="#d2a95f"/><rect x="8" y="14" width="4" height="1" fill="#d2a95f"/></svg><img id="profilePhotoPreview" alt="Foto de perfil"></span><span id="profileIdentity"><small>PERFIL</small><b id="profileNickname">Granjero</b><small>Nickname del juego</small></span><span id="profileChevron" aria-hidden="true">▼</span></button>
+<div id="profileMenu" role="menu" aria-hidden="true"><button id="profileAccountsBtn" type="button" role="menuitem">⚙ Cuentas</button></div>
+</div>
 <div class="lgrid"><button class="lbtn" id="lbNew" style="background:#529343">🌱 Nuevo mundo</button><button class="lbtn" id="lbLoad" style="background:#d99a29">📂 Mundo guardado</button></div>
 <div class="lgrid"><button class="lbtn" id="lbOnline" style="background:#397eb4">🌐 Multijugador privado · beta</button></div>
-<div class="lgrid">
-<div class="card"><label for="nameIn">👤 Tu nombre</label><input id="nameIn" maxlength="12" placeholder="Granjero" autocomplete="off" spellcheck="false"></div>
-<div class="card"><label>🔊 Volumen</label><div class="vol"><div class="vtrack" id="volLobby"><div class="vfill"></div><div class="vthumb"></div></div><b class="vnum"></b></div></div>
+<div id="lobbyVolumeGrid"><div class="card"><label>🔊 Volumen</label><div class="vol"><div class="vtrack" id="volLobby"><div class="vfill"></div><div class="vthumb"></div></div><b class="vnum"></b></div></div></div>
+<div id="musicHint">♪ Toca la pantalla para activar la música · v13</div><div id="lobbyStartStatus" role="status" aria-live="polite"></div>
 </div>
-<div id="musicHint">♪ Toca la pantalla para activar la música · v12</div><div id="lobbyStartStatus" role="status" aria-live="polite"></div>
-</div>
+<div id="accountsPanel" role="dialog" aria-modal="true" aria-labelledby="accountsTitle" aria-hidden="true"><div class="accountCard"><h2 id="accountsTitle">👤 Cuentas y perfil</h2><label for="nameIn">Nickname o nombre visible</label><input id="nameIn" maxlength="12" placeholder="Granjero" autocomplete="off" spellcheck="false"><p class="accountNote">Tu nickname se guarda en este dispositivo y aparece en tus partidas.</p><label>Foto de perfil</label><div class="accountButtons"><button id="chooseProfilePhoto" type="button" style="background:#397eb4">📷 Elegir foto</button><button id="removeProfilePhoto" type="button" style="background:#7354a6">Quitar foto</button></div><input id="profilePhotoInput" type="file" accept="image/*" style="display:none"><p class="accountNote">La foto se guarda localmente por ahora.</p><button id="useFacebookProfile" type="button" style="width:100%;min-height:38px;background:#3166a7">Usar perfil de Facebook</button><div id="profileAccountStatus" role="status" aria-live="polite"></div><button id="closeAccounts" type="button">Listo</button></div></div>
 <div id="onlineLobby"><div class="card"><h2>🌐 Partida privada · beta</h2><p>El servidor ya está configurado. Crea una sala y comparte el código; la otra persona solo tendrá que escribirlo.</p><input id="onlineServerUrl" type="hidden" value="wss://valley-mexico.onrender.com"><button id="onlineHost" style="background:#4c9147">Crear sala y mundo nuevo</button><label for="onlineRoomCode">Código de sala</label><input id="onlineRoomCode" maxlength="8" placeholder="Código que te compartieron" autocomplete="off" spellcheck="false"><button id="onlineJoin" style="background:#397eb4">Unirme a la sala</button><div id="onlineLobbyStatus" role="status">Listo para conectar con el servidor del juego.</div><button id="onlineLobbyBack" style="background:#61584b">Volver</button></div></div>
 <div id="worlds"><div class="card"><h2 style="margin:0;font-size:20px">📂 Mundos guardados</h2><p style="font-size:10px;line-height:1.35;margin:5px 0;color:#d6deea">Respalda tus mundos para transferirlos entre archivos o navegadores.</p><div style="display:flex;gap:7px;margin:7px 0"><button id="exportBackup" style="flex:1;height:36px;background:#397eb4;border-radius:6px;font-size:11px">⬇ Exportar respaldo</button><button id="importBackup" style="flex:1;height:36px;background:#4c9147;border-radius:6px;font-size:11px">⬆ Importar respaldo</button></div><input id="backupFile" type="file" accept=".json,application/json" style="display:none"><div id="backupStatus" style="font-size:9px;line-height:1.3;color:#d6deea;margin-bottom:5px"></div><div id="worldList"></div><button id="worldsBack" style="width:100%;background:#61584b">Volver</button></div></div>
 </div>
@@ -7181,8 +7206,22 @@ const lobby=$('lobby'),worlds=$('worlds'),pause=$('pauseMenu'),nameIn=$('nameIn'
 let enteringWorld=false;
 function bindMobileTap(el,handler){if(!el)return;let last=0;const fire=e=>{const now=Date.now();if(now-last<500)return;last=now;if(e&&e.cancelable&&e.type!=='click')e.preventDefault();handler(e);};el.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen')fire(e);},{passive:false});el.addEventListener('touchend',fire,{passive:false});el.addEventListener('click',fire);}
 HVD.importLegacy();
-nameIn.value=HVD.getName();
-nameIn.oninput=()=>HVD.setName(nameIn.value);
+const profileToggle=$('profileToggle'),profileMenu=$('profileMenu'),profileArea=$('lobbyProfileArea'),accountsPanel=$('accountsPanel'),profileNickname=$('profileNickname'),profilePhotoPreview=$('profilePhotoPreview'),profileAvatarFallback=$('profileAvatarFallback'),profilePhotoInput=$('profilePhotoInput'),profileAccountStatus=$('profileAccountStatus');
+const PROFILE_PHOTO_KEY='hvs_profile_photo';
+function refreshProfileCard(){const nick=(HVD.getName()||'Granjero').trim()||'Granjero';profileNickname.textContent=nick;const photo=HVD.Store.get(PROFILE_PHOTO_KEY)||'';if(photo.startsWith('data:image/')){profilePhotoPreview.src=photo;profilePhotoPreview.style.display='block';profileAvatarFallback.style.display='none';}else{profilePhotoPreview.removeAttribute('src');profilePhotoPreview.style.display='none';profileAvatarFallback.style.display='block';}}
+function setProfileMenu(open){profileMenu.style.display=open?'flex':'none';profileMenu.setAttribute('aria-hidden',open?'false':'true');profileToggle.setAttribute('aria-expanded',open?'true':'false');}
+function closeAccountsPanel(){accountsPanel.style.display='none';accountsPanel.setAttribute('aria-hidden','true');}
+function openAccountsPanel(){setProfileMenu(false);accountsPanel.style.display='flex';accountsPanel.setAttribute('aria-hidden','false');}
+nameIn.value=HVD.getName();refreshProfileCard();nameIn.oninput=()=>{HVD.setName(nameIn.value);refreshProfileCard();};
+bindMobileTap(profileToggle,()=>setProfileMenu(profileMenu.style.display!=='flex'));
+bindMobileTap($('profileAccountsBtn'),openAccountsPanel);
+bindMobileTap($('closeAccounts'),closeAccountsPanel);
+accountsPanel.addEventListener('click',e=>{if(e.target===accountsPanel)closeAccountsPanel();});
+document.addEventListener('pointerdown',e=>{if(!profileArea.contains(e.target))setProfileMenu(false);},{passive:true});
+bindMobileTap($('chooseProfilePhoto'),()=>profilePhotoInput.click());
+bindMobileTap($('removeProfilePhoto'),()=>{HVD.Store.remove(PROFILE_PHOTO_KEY);refreshProfileCard();profileAccountStatus.textContent='Foto de perfil quitada.';});
+profilePhotoInput.addEventListener('change',()=>{const file=profilePhotoInput.files&&profilePhotoInput.files[0];if(!file)return;if(!file.type.startsWith('image/')){profileAccountStatus.textContent='Elige un archivo de imagen.';return;}if(file.size>8*1024*1024){profileAccountStatus.textContent='La foto debe pesar menos de 8 MB.';return;}const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{const side=Math.min(image.naturalWidth,image.naturalHeight);if(!side){profileAccountStatus.textContent='No se pudo leer esa imagen.';return;}const canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;const ctx=canvas.getContext('2d');if(!ctx){profileAccountStatus.textContent='No se pudo preparar la foto.';return;}ctx.imageSmoothingEnabled=false;ctx.drawImage(image,(image.naturalWidth-side)/2,(image.naturalHeight-side)/2,side,side,0,0,64,64);try{const data=canvas.toDataURL('image/png');HVD.Store.set(PROFILE_PHOTO_KEY,data);if(HVD.Store.get(PROFILE_PHOTO_KEY)!==data)throw new Error('storage');refreshProfileCard();profileAccountStatus.textContent='Foto guardada en este dispositivo.';}catch(e){profileAccountStatus.textContent='No se pudo guardar. Prueba con una imagen más pequeña.';}};image.onerror=()=>{profileAccountStatus.textContent='No se pudo abrir esa imagen.';};image.src=String(reader.result||'');};reader.onerror=()=>{profileAccountStatus.textContent='No se pudo leer el archivo.';};reader.readAsDataURL(file);});
+bindMobileTap($('useFacebookProfile'),()=>{profileAccountStatus.textContent='Facebook aún requiere configurar la app de Meta y el inicio seguro en el servidor. Por ahora puedes usar tu nickname y una foto local.';});
 const onlineLobby=$('onlineLobby'),onlineLobbyStatus=$('onlineLobbyStatus'),onlineRoomBadge=$('onlineRoomBadge');
 window.HVOnline=(()=>{
   let ws=null,lastActionAt=0;
@@ -7348,7 +7387,7 @@ function frame(t){
   if(anim)requestAnimationFrame(frame);
 }
 function startLobby(){
-  lobby.style.display='flex';nameIn.value=HVD.getName();sync();if(lobbyStartStatus)lobbyStartStatus.style.display='none';
+  lobby.style.display='flex';nameIn.value=HVD.getName();refreshProfileCard();sync();if(lobbyStartStatus)lobbyStartStatus.style.display='none';
   if(!anim){anim=true;resizeBg();resizeLobbyMascots();lobbyMascotStart=performance.now()||1;lobbyLastBark=-1;lobbyAnimation=Math.floor(Math.random()*4);lobbyM.style.visibility='visible';frame(lobbyMascotStart)}
   HVD.music.start();
 }
