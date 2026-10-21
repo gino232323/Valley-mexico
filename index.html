@@ -374,6 +374,37 @@ button:focus-visible{
 .vnum{min-width:28px;text-align:right;font-size:13px}
 #musicHint{color:#9fbf8f;font-size:11px;letter-spacing:1px;text-shadow:0 1px 0 #000}
 #lobbyStartStatus{display:none;max-width:min(420px,90vw);margin:4px auto 0;padding:7px 10px;border:2px solid #d4a84a;border-radius:7px;background:#17231e;color:#ffe28a;text-align:center;font:11px/1.4 monospace;white-space:normal}
+#lobbyIntro{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:16px;box-sizing:border-box}
+#lobbyIntro[aria-hidden="false"]{display:flex}
+#lobbyIntro #lobbyBrand{transform:translateY(-8px)}
+#lobbyLoadingPanel{box-sizing:border-box;width:min(340px,86vw);padding:10px 13px;background:#102018e8;border:2px solid #d4a84a;border-radius:12px;box-shadow:0 5px 0 #0008;text-align:center}
+#lobbyLoadingStatus{margin:0 0 8px;color:#ffe28a;font:10px/1.4 monospace}
+#lobbyLoadingTrack{height:8px;overflow:hidden;background:#09110c;border:1px solid #a88a4b;border-radius:8px}
+#lobbyLoadingBar{display:block;width:0;height:100%;background:linear-gradient(90deg,#4d8e45,#a8d863);border-radius:8px}
+@keyframes lobbyLoadingFill{to{width:100%}}
+#skipLobbyIntro{margin-top:8px;min-height:30px;padding:3px 12px;background:#397b48;border:1px solid #f1d482;border-radius:10px;color:#fff1c4;font:10px monospace}
+#lobbyWrap{position:absolute;inset:0;z-index:2;box-sizing:border-box;width:100%;max-width:none;display:none;grid-template-columns:minmax(150px,210px) minmax(0,1fr);grid-template-rows:1fr auto;align-items:center;gap:14px;padding:92px 18px 58px;pointer-events:auto}
+#lobbyWrap[aria-hidden="false"]{display:grid}
+#lobbyWrap #lobbyProfileArea{position:absolute;top:12px;right:14px;z-index:20;width:min(285px,56vw);margin:0;justify-content:flex-end}
+#lobbyWrap #profileToggle{min-height:58px;padding:5px 9px;border:2px solid #f1d482;border-radius:14px;background:#1c3022eF;box-shadow:0 4px 0 #0007}
+#lobbyWrap #profileAvatarFrame{width:42px;height:42px;flex-basis:42px;border-radius:9px}
+#lobbySideMenu{grid-column:1;grid-row:1;align-self:center;display:flex;flex-direction:column;gap:9px;width:100%;box-sizing:border-box;padding:10px;background:#0b1710bd;border:2px solid #d4a84a;border-radius:17px;box-shadow:0 6px 0 #0007}
+#lobbySideMenu .lobbySideButton,#lobbyWrap #openGlobalLeaderboard{box-sizing:border-box;width:100%;min-height:46px;height:46px;padding:5px 10px;border:2px solid #f1d482;border-radius:14px;box-shadow:0 3px 0 #0007;color:#fff1c4;text-align:left;font:10px monospace!important;white-space:normal;line-height:1.15}
+#lobbyWrap #openGlobalLeaderboard{background:#65539b}
+#lobbyCenter{grid-column:2;grid-row:1;min-width:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+#lobbyAvatarStage{position:relative;width:min(360px,100%);height:min(440px,100%);min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;isolation:isolate}
+#lobbyAvatarStage::before{content:'';position:absolute;z-index:-1;width:min(300px,85%);height:min(300px,80%);border-radius:50%;background:radial-gradient(ellipse,rgba(115,189,84,.28),rgba(68,112,57,.12) 45%,transparent 72%)}
+#lobbyAvatarStage::after{content:'';position:absolute;bottom:22px;left:50%;width:120px;height:16px;transform:translateX(-50%);border-radius:50%;background:#07100bb0;filter:blur(1px)}
+#lobbyPlayerPreview{position:relative;z-index:1;width:min(180px,42vw);height:auto;max-height:70%;aspect-ratio:4/5;image-rendering:pixelated;filter:drop-shadow(0 5px 0 #0008)}
+#lobbyPreviewName{position:relative;z-index:2;margin-top:2px;padding:4px 12px;background:#112018d9;border:1px solid #d4a84a;border-radius:10px;color:#ffe28a;font:10px monospace}
+#lobbyCharacterCaption{margin:0;color:#d9f1c5;font:9px monospace;text-align:center;text-shadow:0 2px 0 #000}
+#lobbyWrap #lobbyVolumeGrid{position:absolute;right:14px;bottom:12px;z-index:3;width:min(220px,42vw);justify-content:flex-end}
+#lobbyWrap #lobbyVolumeGrid .card{width:100%;padding:6px 9px;border:2px solid #d4a84a;border-radius:12px;background:#102018e8;color:#fff1c4}
+#lobbyWrap #musicHint{position:absolute;left:14px;bottom:14px;z-index:3;max-width:42vw;margin:0;color:#fff1c4;font:9px monospace;text-shadow:0 2px 0 #000}
+#lobbyWrap #lobbyStartStatus{position:absolute;left:50%;bottom:48px;z-index:4;transform:translateX(-50%);margin:0}
+@media(max-width:650px){#lobbyWrap{grid-template-columns:minmax(112px,32vw) minmax(0,1fr);gap:8px;padding:84px 9px 54px}#lobbySideMenu{gap:7px;padding:7px;border-radius:14px}#lobbySideMenu .lobbySideButton,#lobbyWrap #openGlobalLeaderboard{min-height:42px;height:42px;padding:4px 6px;font-size:9px!important;border-radius:12px}#lobbyWrap #lobbyProfileArea{top:8px;right:8px;width:min(250px,62vw)}#lobbyWrap #profileToggle{min-height:50px;padding:4px 6px;gap:6px}#lobbyWrap #profileAvatarFrame{width:36px;height:36px;flex-basis:36px}#lobbyWrap #profileIdentity small{font-size:7px}#lobbyWrap #profileNickname{max-width:120px;font-size:11px}#lobbyAvatarStage{min-height:200px}#lobbyPlayerPreview{width:min(145px,39vw)}#lobbyWrap #lobbyVolumeGrid{right:7px;bottom:6px;width:min(180px,43vw)}#lobbyWrap #musicHint{left:7px;bottom:7px;max-width:44vw;font-size:8px}}
+@media(max-width:360px){#lobbyWrap{grid-template-columns:100px minmax(0,1fr);gap:6px;padding-left:6px;padding-right:6px}#lobbySideMenu{padding:5px}#lobbySideMenu .lobbySideButton,#lobbyWrap #openGlobalLeaderboard{padding:3px 4px;font-size:8px!important}#lobbyWrap #profileIdentity small:last-child{display:none}}
+@media(max-height:520px) and (orientation:landscape){#lobbyWrap{padding-top:74px;padding-bottom:45px;gap:8px}#lobbyAvatarStage{min-height:140px}#lobbyPlayerPreview{width:min(125px,25vw)}#lobbySideMenu{gap:5px;padding:6px}#lobbySideMenu .lobbySideButton,#lobbyWrap #openGlobalLeaderboard{min-height:36px;height:36px}#lobbyWrap #lobbyVolumeGrid{bottom:5px}#lobbyWrap #musicHint{bottom:7px}}
 #openGlobalLeaderboard{width:min(260px,92vw);height:40px;min-height:40px;padding:4px 8px;background:#65539b;border:2px solid #f1d482;border-radius:8px;font:11px monospace!important;box-shadow:0 3px 0 #0007}
 #globalRankingModal{display:none;position:absolute;inset:0;z-index:118;align-items:center;justify-content:center;box-sizing:border-box;padding:12px;background:#000d}
 #globalRankingModal[aria-hidden="false"]{display:flex}
@@ -668,15 +699,17 @@ body.bot-house-interior #hud,body.bot-house-interior #weaponHud,body.bot-house-i
 
 <div id="hint">Explora el valle hacia el este, el norte y el sur · conejos, patos y alces huyen si te acercas</div>
 <div id="lobby"><canvas id="lobbyBg"></canvas>
-<div id="lobbyWrap">
+<section id="lobbyIntro" aria-hidden="true" aria-label="Pantalla de carga">
 <div id="lobbyBrand"><h1 id="lobbyTitle">🏡 Harvest Valley</h1><p id="lobbySub"><span id="lobbyM">M</span> É X I C <span id="lobbyO">O</span></p><canvas id="lobbyMascots" aria-hidden="true"></canvas></div>
+<div id="lobbyLoadingPanel"><p id="lobbyLoadingStatus" role="status" aria-live="polite">Todo está bien · preparando tu valle…</p><div id="lobbyLoadingTrack" role="progressbar" aria-label="Carga del lobby" aria-valuemin="0" aria-valuemax="100"><span id="lobbyLoadingBar"></span></div><button id="skipLobbyIntro" type="button">Entrar al lobby</button></div>
+</section>
+<div id="lobbyWrap" aria-hidden="true">
 <div id="lobbyProfileArea">
 <button id="profileToggle" type="button" aria-expanded="false" aria-controls="profileMenu"><span id="profileAvatarFrame"><svg id="profileAvatarFallback" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><rect x="6" y="2" width="4" height="4" fill="#e7c27a"/><rect x="5" y="6" width="6" height="4" fill="#8c6038"/><rect x="3" y="7" width="2" height="4" fill="#d2a95f"/><rect x="11" y="7" width="2" height="4" fill="#d2a95f"/><rect x="5" y="10" width="3" height="4" fill="#465c43"/><rect x="8" y="10" width="3" height="4" fill="#465c43"/><rect x="4" y="14" width="4" height="1" fill="#d2a95f"/><rect x="8" y="14" width="4" height="1" fill="#d2a95f"/></svg><img id="profilePhotoPreview" alt="Foto de perfil"></span><span id="profileIdentity"><small>PERFIL</small><b id="profileNickname">Granjero</b><small>Nickname del juego</small></span><span id="profileChevron" aria-hidden="true">▼</span></button>
 <div id="profileMenu" role="menu" aria-hidden="true"><button id="profileAccountsBtn" type="button" role="menuitem">⚙ Cuentas</button></div>
 </div>
-<div class="lgrid"><button class="lbtn" id="lbNew" style="background:#529343">🌱 Nuevo mundo</button><button class="lbtn" id="lbLoad" style="background:#d99a29">📂 Mundo guardado</button></div>
-<div class="lgrid"><button class="lbtn" id="lbOnline" style="background:#397eb4">🌐 Multijugador privado · beta</button></div>
-<button id="openGlobalLeaderboard" type="button">🏆 Ranking mundial · Top 10</button>
+<nav id="lobbySideMenu" aria-label="Opciones del lobby"><button id="openGlobalLeaderboard" class="lobbySideButton" type="button">🏆 Ranking mundial · Top 10</button><button class="lbtn lobbySideButton" id="lbNew" style="background:#529343" type="button">🌱 Nuevo mundo</button><button class="lbtn lobbySideButton" id="lbLoad" style="background:#d99a29" type="button">📂 Mundo guardado</button><button class="lbtn lobbySideButton" id="lbOnline" style="background:#397eb4" type="button">🌐 Multijugador privado · beta</button></nav>
+<section id="lobbyCenter" aria-label="Vista previa de tu personaje"><div id="lobbyAvatarStage"><canvas id="lobbyPlayerPreview" width="96" height="120" role="img" aria-label="Tu personaje con animación de respiración"></canvas><div id="lobbyPreviewName">Tu personaje</div></div><p id="lobbyCharacterCaption">Apariencia equipada</p></section>
 <div id="lobbyVolumeGrid"><div class="card"><label>🔊 Volumen</label><div class="vol"><div class="vtrack" id="volLobby"><div class="vfill"></div><div class="vthumb"></div></div><b class="vnum"></b></div></div></div>
 <div id="musicHint">♪ Toca la pantalla para activar la música · v14</div><div id="lobbyStartStatus" role="status" aria-live="polite"></div>
 </div>
@@ -7404,13 +7437,14 @@ return {
 (()=>{
 const $=id=>document.getElementById(id);
 let game=null,pauseBackupDownloaded=false;
-const lobby=$('lobby'),worlds=$('worlds'),pause=$('pauseMenu'),nameIn=$('nameIn'),hint=$('musicHint'),lobbyStartStatus=$('lobbyStartStatus');
+const lobby=$('lobby'),lobbyIntro=$('lobbyIntro'),lobbyWrap=$('lobbyWrap'),lobbyLoadingStatus=$('lobbyLoadingStatus'),lobbyLoadingBar=$('lobbyLoadingBar'),skipLobbyIntro=$('skipLobbyIntro'),lobbyPlayerPreview=$('lobbyPlayerPreview'),lobbyPreviewName=$('lobbyPreviewName'),worlds=$('worlds'),pause=$('pauseMenu'),nameIn=$('nameIn'),hint=$('musicHint'),lobbyStartStatus=$('lobbyStartStatus');
+let lobbyIntroDone=false,lobbyIntroTimer=0,lobbyIntroActive=false;
 let enteringWorld=false;
 let lastMenuClickAt=0;function bindMobileTap(el,handler){if(!el)return;let last=0;el.addEventListener('click',e=>{const now=Date.now();if(now-last<350||now-lastMenuClickAt<350)return;last=now;lastMenuClickAt=now;if(e.cancelable)e.preventDefault();handler(e);});}
 HVD.importLegacy();
 const profileToggle=$('profileToggle'),profileMenu=$('profileMenu'),profileArea=$('lobbyProfileArea'),accountsPanel=$('accountsPanel'),profileNickname=$('profileNickname'),profilePhotoPreview=$('profilePhotoPreview'),profileAvatarFallback=$('profileAvatarFallback'),profilePhotoInput=$('profilePhotoInput'),profileAccountStatus=$('profileAccountStatus');
 const PROFILE_PHOTO_KEY='hvs_profile_photo';
-function refreshProfileCard(){const nick=(HVD.getName()||'Granjero').trim()||'Granjero';profileNickname.textContent=nick;const photo=HVD.Store.get(PROFILE_PHOTO_KEY)||'';if(photo.startsWith('data:image/')){profilePhotoPreview.src=photo;profilePhotoPreview.style.display='block';profileAvatarFallback.style.display='none';}else{profilePhotoPreview.removeAttribute('src');profilePhotoPreview.style.display='none';profileAvatarFallback.style.display='block';}}
+function refreshProfileCard(){const nick=(HVD.getName()||'Granjero').trim()||'Granjero';profileNickname.textContent=nick;if(lobbyPreviewName){const labels={strawHat:'Sombrero de paja',witchHat:'Sombrero de bruja',purpleHat:'Sombrero de luz púrpura',pumpkinMask:'Máscara de calabaza'};lobbyPreviewName.textContent=labels[equippedCosmetic]||'Estilo clásico';}const photo=HVD.Store.get(PROFILE_PHOTO_KEY)||'';if(photo.startsWith('data:image/')){profilePhotoPreview.src=photo;profilePhotoPreview.style.display='block';profileAvatarFallback.style.display='none';}else{profilePhotoPreview.removeAttribute('src');profilePhotoPreview.style.display='none';profileAvatarFallback.style.display='block';}}
 function setProfileMenu(open){profileMenu.style.display=open?'flex':'none';profileMenu.setAttribute('aria-hidden',open?'false':'true');profileToggle.setAttribute('aria-expanded',open?'true':'false');}
 function closeAccountsPanel(){accountsPanel.style.display='none';accountsPanel.setAttribute('aria-hidden','true');}
 function openAccountsPanel(){setProfileMenu(false);accountsPanel.style.display='flex';accountsPanel.setAttribute('aria-hidden','false');}
@@ -7422,7 +7456,7 @@ function renderGlobalFriendSearchRows(rows){const list=$('globalRankingFriendRes
 async function searchGlobalFriends(){const q=$('globalRankingFriendQuery').value.trim(),status=$('globalRankingFriendStatus'),list=$('globalRankingFriendResults');list.replaceChildren();if(!q){status.textContent='Escribe un nickname o ID para buscar.';return;}if(!/^[0-9]+$/.test(q)&&q.length<3){status.textContent='Escribe al menos 3 letras o un ID exacto.';return;}status.textContent='Buscando…';try{if(!window.HVLeaderboard)throw new Error('offline');const rows=await window.HVLeaderboard.searchFriends(q);renderGlobalFriendSearchRows(rows);status.textContent=rows.length?`${rows.length} resultado${rows.length===1?'':'s'}.`:'No se encontraron perfiles disponibles.';}catch(e){const message=String(e&&e.message||'');status.textContent=message==='HV_AUTH_REQUIRED'?'Inicia sesión o entra como invitado para buscar amigos.':'No se pudo buscar. Comprueba la conexión e inténtalo de nuevo.';}}
 async function addGlobalFriend(id,button){if(button)button.disabled=true;const q=$('globalRankingFriendQuery').value.trim(),status=$('globalRankingFriendStatus');try{const result=await window.HVLeaderboard.sendFriendRequest(id);const rows=await window.HVLeaderboard.searchFriends(q);renderGlobalFriendSearchRows(rows);status.textContent=result==='request_sent'?'Solicitud enviada.':result==='already_friends'?'Ya son amigos.':'Ya hay una solicitud pendiente.';}catch(e){status.textContent='No se pudo enviar la solicitud. Inicia sesión y vuelve a intentarlo.';}finally{if(button)button.disabled=false;}}
 nameIn.value=HVD.getName();refreshProfileCard();nameIn.oninput=()=>{HVD.setName(nameIn.value);refreshProfileCard();};
-bindMobileTap($('openGlobalLeaderboard'),openGlobalRanking);bindMobileTap($('closeGlobalRanking'),closeGlobalRanking);bindMobileTap($('globalRankingAccount'),()=>{closeGlobalRanking();if(window.HVLeaderboard)window.HVLeaderboard.openCloudAccount();else openAccountsPanel();});bindMobileTap($('globalRankingFriendSearchBtn'),searchGlobalFriends);$('globalRankingFriendQuery').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchGlobalFriends();}});globalRankingModal.addEventListener('click',e=>{if(e.target===globalRankingModal)closeGlobalRanking();});
+bindMobileTap(skipLobbyIntro,showLobbyMain);bindMobileTap($('openGlobalLeaderboard'),openGlobalRanking);bindMobileTap($('closeGlobalRanking'),closeGlobalRanking);bindMobileTap($('globalRankingAccount'),()=>{closeGlobalRanking();if(window.HVLeaderboard)window.HVLeaderboard.openCloudAccount();else openAccountsPanel();});bindMobileTap($('globalRankingFriendSearchBtn'),searchGlobalFriends);$('globalRankingFriendQuery').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchGlobalFriends();}});globalRankingModal.addEventListener('click',e=>{if(e.target===globalRankingModal)closeGlobalRanking();});
 bindMobileTap(profileToggle,()=>setProfileMenu(profileMenu.style.display!=='flex'));
 bindMobileTap($('profileAccountsBtn'),openAccountsPanel);
 bindMobileTap($('closeAccounts'),closeAccountsPanel);
@@ -7538,10 +7572,11 @@ const inventoryToggle=$('inventoryToggle'),hudRoot=$('hud');inventoryToggle.addE
 
 // ---- fondo del lobby: estrellas, luna, luciérnagas y siluetas de pinos ----
 const bg=$('lobbyBg'),bx=bg.getContext('2d');const SC=3;
-const lobbyBrand=$('lobbyBrand'),lobbyTitle=$('lobbyTitle'),lobbySub=$('lobbySub'),lobbyM=$('lobbyM'),lobbyO=$('lobbyO'),lobbyMascots=$('lobbyMascots'),lobbyMascotCtx=lobbyMascots.getContext('2d');
+const lobbyBrand=$('lobbyBrand'),lobbyTitle=$('lobbyTitle'),lobbySub=$('lobbySub'),lobbyM=$('lobbyM'),lobbyO=$('lobbyO'),lobbyMascots=$('lobbyMascots'),lobbyMascotCtx=lobbyMascots.getContext('2d'),lobbyPreviewCtx=lobbyPlayerPreview?lobbyPlayerPreview.getContext('2d'):null;if(lobbyPreviewCtx)lobbyPreviewCtx.imageSmoothingEnabled=false;
 let lobbyMascotWidth=0,lobbyMascotHeight=0,lobbyMascotDpr=1,lobbyMascotStart=0,lobbyLastBark=-1,lobbyAnimation=0;
 let stars=[],flies=[],sil=null,anim=false;
 function resizeLobbyMascots(){let r=lobbyBrand.getBoundingClientRect(),w=Math.max(220,r.width+140),h=Math.max(90,r.height+34);lobbyMascotDpr=Math.max(1,window.devicePixelRatio||1);lobbyMascotWidth=w;lobbyMascotHeight=h;lobbyMascots.style.width=w+'px';lobbyMascots.style.height=h+'px';lobbyMascots.width=Math.round(w*lobbyMascotDpr);lobbyMascots.height=Math.round(h*lobbyMascotDpr);lobbyMascotCtx.setTransform(lobbyMascotDpr,0,0,lobbyMascotDpr,0,0);lobbyMascotCtx.imageSmoothingEnabled=false;}
+function drawLobbyPlayerPreview(t){const q=lobbyPreviewCtx,c=lobbyPlayerPreview;if(!q||!c)return;q.imageSmoothingEnabled=false;q.clearRect(0,0,c.width,c.height);q.save();q.scale(4,4);const breath=Math.sin((t||performance.now())/520)*.7,px=(x,y,w,h,color)=>{q.fillStyle=color;q.fillRect(x,y,w,h)},border=(x,y,w,h,color)=>{px(x-1,y-1,w+2,h+2,'#352820');px(x,y,w,h,color)};q.fillStyle='rgba(0,0,0,.32)';q.beginPath();q.ellipse(12,28,6,1.5,0,0,Math.PI*2);q.fill();border(8,22,4,5,'#3a322c');border(14,22,4,5,'#3a322c');px(9,23,2,1,'#5a4a40');px(15,23,2,1,'#5a4a40');border(7,27,6,2,'#2a2018');border(13,27,6,2,'#2a2018');q.save();q.translate(0,breath);border(6,12,12,10,'#2f6f9a');px(7,13,10,1,'#5aa0c8');border(4,13,3,7,'#2f6f9a');border(17,13,3,7,'#2f6f9a');px(4,19,3,2,'#e8b888');px(17,19,3,2,'#e8b888');px(7,15,4,6,'#3d5a2e');px(13,15,4,6,'#3d5a2e');px(7,21,11,2,'#4a3020');px(11,21,2,2,'#d4a848');border(7,5,10,9,'#e8b888');px(8,6,2,6,'#c89068');px(14,6,2,6,'#c89068');px(9,9,1,1,'#26170f');px(14,9,1,1,'#26170f');px(11,11,2,1,'#c89068');px(6,4,12,3,'#2a1a12');px(7,3,3,2,'#5a3a28');px(11,2,4,3,'#5a3a28');px(15,3,2,2,'#5a3a28');px(6,7,2,6,'#2a1a12');px(16,7,2,6,'#2a1a12');if(equippedCosmetic==='strawHat'){px(4,4,16,2,'#80502f');px(7,1,10,4,'#d3a24e');px(9,2,6,1,'#f0ce7b');}else if(equippedCosmetic==='witchHat'){px(11,0,3,2,'#563077');px(9,2,7,2,'#70449a');px(7,4,11,2,'#39234e');px(10,3,2,1,'#c69be8');}else if(equippedCosmetic==='purpleHat'){px(5,4,14,2,'#5f2990');px(8,1,9,4,'#9a56d1');px(10,2,4,1,'#e2b8ff');px(7,5,11,1,'#c9a1ec');}else if(equippedCosmetic==='pumpkinMask'){px(7,7,10,6,'#d96a20');px(8,8,2,2,'#24180f');px(14,8,2,2,'#24180f');px(10,11,4,1,'#ffc34b');px(6,6,1,2,'#f29532');px(17,6,1,2,'#f29532');}if(ironHelmet){px(6,4,12,4,'#74838a');px(8,3,8,2,'#aab5b8');px(10,7,7,1,'#3a4850');}q.restore();q.restore();}
 function lcg(seed){let s=seed;return()=>{s=(s*1664525+1013904223)%4294967296;return s/4294967296}}
 function resizeBg(){
   bg.width=Math.max(60,Math.ceil(innerWidth/SC));bg.height=Math.max(40,Math.ceil(innerHeight/SC));
@@ -7598,13 +7633,17 @@ function frame(t){
       bx.fillStyle='rgba(232,242,106,'+(0.12*a).toFixed(2)+')';bx.fillRect((x|0)-1,(y|0)-1,3,3);
       bx.fillStyle='rgba(232,242,106,'+(0.4+0.6*a).toFixed(2)+')';bx.fillRect(x|0,y|0,1,1);
     });
-    drawLobbyMascots(t);
+    if(lobbyIntroActive)drawLobbyMascots(t);if(lobbyWrap&&lobbyWrap.getAttribute('aria-hidden')==='false')drawLobbyPlayerPreview(t);
   }catch(e){console.error('La animación del lobby se detuvo:',e);anim=false;return;}
   if(anim)requestAnimationFrame(frame);
 }
+function showLobbyMain(){if(lobbyIntroTimer){clearTimeout(lobbyIntroTimer);lobbyIntroTimer=0;}lobbyIntroDone=true;lobbyIntroActive=false;if(lobbyIntro){lobbyIntro.style.display='none';lobbyIntro.setAttribute('aria-hidden','true');}if(lobbyWrap){lobbyWrap.style.display='grid';lobbyWrap.setAttribute('aria-hidden','false');}}
+function showLobbyIntro(){if(!lobbyIntro||!lobbyWrap)return;lobbyIntroActive=true;lobbyIntro.style.display='flex';lobbyIntro.setAttribute('aria-hidden','false');lobbyWrap.style.display='none';lobbyWrap.setAttribute('aria-hidden','true');const durations=[9.2,6.2,7.9,5.6],ms=Math.max(3600,Math.round((durations[lobbyAnimation]||6.2)*1000-180));if(lobbyLoadingStatus)lobbyLoadingStatus.textContent='Todo está bien · preparando tu valle…';if(lobbyLoadingBar){lobbyLoadingBar.style.animation='none';lobbyLoadingBar.style.width='0%';void lobbyLoadingBar.offsetWidth;lobbyLoadingBar.style.animation='lobbyLoadingFill '+ms+'ms linear forwards';}lobbyIntroTimer=setTimeout(showLobbyMain,ms);}
 function startLobby(playMusic=true){
   lobby.style.display='flex';nameIn.value=HVD.getName();refreshProfileCard();sync();if(lobbyStartStatus)lobbyStartStatus.style.display='none';
-  if(!anim){anim=true;resizeBg();resizeLobbyMascots();lobbyMascotStart=performance.now()||1;lobbyLastBark=-1;lobbyAnimation=Math.floor(Math.random()*4);lobbyM.style.visibility='visible';frame(lobbyMascotStart)}
+  if(!anim){lobbyAnimation=Math.floor(Math.random()*4);if(!lobbyIntroDone&&!lobbyIntroTimer)showLobbyIntro();anim=true;resizeBg();resizeLobbyMascots();lobbyMascotStart=performance.now()||1;lobbyLastBark=-1;lobbyM.style.visibility='visible';frame(lobbyMascotStart);}
+  else if(!lobbyIntroDone&&!lobbyIntroTimer)showLobbyIntro();
+  if(lobbyIntroDone)showLobbyMain();
   if(playMusic)HVD.music.start();else HVD.music.stop();
 }
 window.addEventListener('resize',()=>{if(anim){resizeBg();resizeLobbyMascots()}});
@@ -7677,7 +7716,7 @@ async function enter(id){
     HVD.unlock();HVD.music.stop();
     const started=window.startHVD(id);
     if(!started||typeof started.stop!=='function')throw new Error('El mundo no pudo completar el inicio.');
-    game=started;lobby.style.display='none';anim=false;worlds.style.display='none';flushOnlineRosterNotices();
+    game=started;if(lobbyIntroTimer){clearTimeout(lobbyIntroTimer);lobbyIntroTimer=0;}lobbyIntroDone=true;lobbyIntroActive=false;lobby.style.display='none';anim=false;worlds.style.display='none';flushOnlineRosterNotices();
     if(lobbyStartStatus)lobbyStartStatus.style.display='none';
     return true;
   }catch(err){
