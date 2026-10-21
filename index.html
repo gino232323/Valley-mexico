@@ -374,6 +374,23 @@ button:focus-visible{
 .vnum{min-width:28px;text-align:right;font-size:13px}
 #musicHint{color:#9fbf8f;font-size:11px;letter-spacing:1px;text-shadow:0 1px 0 #000}
 #lobbyStartStatus{display:none;max-width:min(420px,90vw);margin:4px auto 0;padding:7px 10px;border:2px solid #d4a84a;border-radius:7px;background:#17231e;color:#ffe28a;text-align:center;font:11px/1.4 monospace;white-space:normal}
+#openGlobalLeaderboard{width:min(260px,92vw);height:40px;min-height:40px;padding:4px 8px;background:#65539b;border:2px solid #f1d482;border-radius:8px;font:11px monospace!important;box-shadow:0 3px 0 #0007}
+#globalRankingModal{display:none;position:absolute;inset:0;z-index:118;align-items:center;justify-content:center;box-sizing:border-box;padding:12px;background:#000d}
+#globalRankingModal[aria-hidden="false"]{display:flex}
+#globalRankingCard{box-sizing:border-box;width:min(430px,94vw);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;gap:7px;padding:12px;background:#18251f;border:3px solid #d4a84a;box-shadow:0 6px 0 #0008;color:#f6e6bd;font-family:'Courier New',monospace}
+#globalRankingCard h2{margin:0;color:#ffe28a;font:900 16px monospace;text-align:center}
+#globalRankingCard p{margin:0;color:#c5d8b5;font:9px/1.4 monospace;text-align:center}
+#globalRankingStatus{min-height:16px;color:#ffe28a;font:10px/1.35 monospace;text-align:center;overflow-wrap:anywhere}
+#globalRankingRows{display:grid;gap:4px;max-height:58vh;overflow:auto;touch-action:pan-y}
+.hvGlobalRankRow{display:grid;grid-template-columns:26px 36px minmax(0,1fr) auto;align-items:center;gap:7px;min-height:40px;padding:4px 6px;background:#121d17;border:1px solid #536247}
+.hvGlobalRankPosition{color:#ffe28a;font:900 12px monospace;text-align:center}
+.hvGlobalRankAvatar{box-sizing:border-box;width:32px;height:32px;border:2px solid #b89b54;background:#283b2d;image-rendering:pixelated}
+.hvGlobalRankAvatar svg{display:block;width:100%;height:100%;image-rendering:pixelated}
+.hvGlobalRankName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f6e6bd;font:bold 11px monospace}
+.hvGlobalRankDay{white-space:nowrap;color:#9cff78;font:bold 10px monospace}
+.globalRankingActions{display:flex;gap:7px}
+.globalRankingActions button{flex:1;min-height:36px;height:36px;padding:4px;background:#397b48;font:10px monospace!important}
+.globalRankingActions #closeGlobalRanking{background:#61584b}
 #worlds{display:none;position:absolute;left:0;top:0;width:100%;height:100%;background:#000c;z-index:110;align-items:center;justify-content:center}
 #worlds .card{width:min(440px,94vw);max-height:90vh;overflow-y:auto;touch-action:pan-y;background:#0f172a;border:4px solid #38bdf8;box-shadow:0 0 15px #38bdf844, inset 0 0 10px #000;color:#f8fafc;font-family:'Courier New',monospace;}
 .wrow{display:flex;align-items:center;gap:8px;padding:10px;background:#1e293b;border:2px solid #8b5cf6;border-radius:6px;box-shadow:2px 2px 0 #000;}
@@ -519,6 +536,8 @@ body.bot-house-interior #hud,body.bot-house-interior #weaponHud,body.bot-house-i
 <button id="chooseFarmerRobot" style="width:100%;height:42px;margin:4px 0;background:#5e7c55">🤖 Poner robot granjero</button>
 <button id="chooseDogHouse" style="width:100%;height:42px;margin:4px 0;background:#8b6a37">🐕 Poner casa de perro</button>
 <button id="chooseRobertoHouse" style="width:100%;height:42px;margin:4px 0;background:#9a5c38">🏠 Poner casa de Roberto</button>
+<button id="chooseMoveHouse" style="width:100%;height:42px;margin:4px 0;background:#9a5c38">↔ Mover casa</button>
+<button id="chooseMoveShop" style="width:100%;height:42px;margin:4px 0;background:#b5793d">↔ Mover tienda</button>
 <button id="chooseAltar" style="width:100%;height:42px;margin:4px 0;background:#705a43">🕯️ Altar de ofrenda (10🪵)</button>
 <button id="chooseDestroy" style="width:100%;height:42px;margin:4px 0;background:#b54a39">🧹 Retirar objeto</button>
 <button id="closeBuildMenu" style="width:100%;height:36px;margin-top:6px;background:#61584b">Cancelar</button>
@@ -625,10 +644,12 @@ body.bot-house-interior #hud,body.bot-house-interior #weaponHud,body.bot-house-i
 </div>
 <div class="lgrid"><button class="lbtn" id="lbNew" style="background:#529343">🌱 Nuevo mundo</button><button class="lbtn" id="lbLoad" style="background:#d99a29">📂 Mundo guardado</button></div>
 <div class="lgrid"><button class="lbtn" id="lbOnline" style="background:#397eb4">🌐 Multijugador privado · beta</button></div>
+<button id="openGlobalLeaderboard" type="button">🏆 Ranking mundial · Top 10</button>
 <div id="lobbyVolumeGrid"><div class="card"><label>🔊 Volumen</label><div class="vol"><div class="vtrack" id="volLobby"><div class="vfill"></div><div class="vthumb"></div></div><b class="vnum"></b></div></div></div>
-<div id="musicHint">♪ Toca la pantalla para activar la música · v13</div><div id="lobbyStartStatus" role="status" aria-live="polite"></div>
+<div id="musicHint">♪ Toca la pantalla para activar la música · v14</div><div id="lobbyStartStatus" role="status" aria-live="polite"></div>
 </div>
-<div id="accountsPanel" role="dialog" aria-modal="true" aria-labelledby="accountsTitle" aria-hidden="true"><div class="accountCard"><h2 id="accountsTitle">👤 Perfil y cuenta</h2><div class="hvAccountTabs"><button id="hvTabLocal" type="button" aria-pressed="true">Local</button><button id="hvTabCloud" type="button" aria-pressed="false">Cuenta</button><button id="hvTabFriends" type="button" aria-pressed="false">Amigos</button></div><section id="hvLocalArea"><label for="nameIn">Nickname o nombre visible</label><input id="nameIn" maxlength="12" placeholder="Granjero" autocomplete="off" spellcheck="false"><p class="accountNote">Tu nickname se guarda en este dispositivo y aparece en tus partidas.</p><label>Foto de perfil local</label><div class="accountButtons"><button id="chooseProfilePhoto" type="button" style="background:#397eb4">📷 Elegir foto</button><button id="removeProfilePhoto" type="button" style="background:#7354a6">Quitar foto</button></div><input id="profilePhotoInput" type="file" accept="image/*" style="display:none"><p class="accountNote">La foto se guarda únicamente en este dispositivo.</p><div id="profileAccountStatus" role="status" aria-live="polite"></div></section><section id="hvCloudArea" class="hvInactive"><div id="hvAuthState" class="hvAccountStatus" role="status" aria-live="polite">Conectando…</div><form id="hvAuthForm" onsubmit="return false"><label for="hvEmail">Correo electrónico</label><input id="hvEmail" type="email" autocomplete="email" maxlength="254" placeholder="correo@ejemplo.com"><label for="hvPassword">Contraseña</label><input id="hvPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres"><div class="accountButtons"><button id="hvSignIn" type="button">Iniciar sesión</button><button id="hvSignUp" type="button" disabled>Crear cuenta</button></div><p id="hvSignupNotice" class="accountNote" hidden>El registro público permanece pausado hasta configurar y verificar SMTP. No desactivaremos la confirmación por correo.</p><div id="hvAuthStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></form><div id="hvSignedInArea" class="hvInactive"><p class="accountNote">Correo privado: <b id="hvAccountEmail">—</b></p><div class="hvPublicIdLine">Tu ID de jugador <strong id="hvOwnPublicId">—</strong><button id="hvCopyOwnId" type="button">Copiar</button></div><label for="hvCloudNickname">Nickname público</label><input id="hvCloudNickname" maxlength="12" autocomplete="off"><label class="hvCheck"><input id="hvDiscoverable" type="checkbox"> Permitir que me encuentren en búsquedas</label><button id="hvSaveCloudProfile" type="button">Guardar perfil</button><div id="hvCloudProfileStatus" class="hvAccountStatus" role="status" aria-live="polite"></div><fieldset class="hvPrefs"><legend>Notificaciones por correo · opcionales</legend><label class="hvCheck"><input id="hvUpdatesOptIn" type="checkbox"> Avisos de actualizaciones</label><label class="hvCheck"><input id="hvGiftsOptIn" type="checkbox"> Avisos de regalos</label><button id="hvSaveNotificationPrefs" type="button">Guardar preferencias</button><div id="hvNotificationStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></fieldset><button id="hvSignOut" type="button" class="hvSignOut">Cerrar sesión</button></div></section><section id="hvFriendsArea" class="hvInactive"><div id="hvSocialStatus" class="hvAccountStatus" role="status" aria-live="polite">Inicia sesión para usar Amigos.</div><div class="hvSearchRow"><input id="hvSearchInput" maxlength="30" placeholder="Nickname o ID de jugador" autocomplete="off"><button id="hvSearchBtn" type="button">Buscar</button></div><div class="accountButtons"><button id="hvRecentBtn" type="button">Recientes</button><button id="hvRefreshSocial" type="button">Actualizar listas</button></div><h3>Resultados</h3><div id="hvSearchResults" class="hvPlayerList"></div><h3>Amigos</h3><div id="hvFriendsList" class="hvPlayerList"></div><h3>Solicitudes recibidas</h3><div id="hvIncomingList" class="hvPlayerList"></div><h3>Solicitudes enviadas</h3><div id="hvOutgoingList" class="hvPlayerList"></div></section><div id="hvProfileModal" role="dialog" aria-modal="true" aria-labelledby="hvProfileName" aria-hidden="true"><div class="hvProfileCard"><button id="hvCloseProfile" type="button" class="hvProfileClose" aria-label="Cerrar perfil">×</button><div id="hvProfileAvatar"></div><h3 id="hvProfileName">Jugador</h3><div class="hvPublicIdLine">ID <strong id="hvProfileId">—</strong><button id="hvCopyProfileId" type="button">Copiar</button></div><p id="hvProfileActivity"></p><button id="hvProfileFriendAction" type="button"></button><div id="hvProfileStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></div></div><button id="closeAccounts" type="button">Listo</button></div></div>
+<div id="globalRankingModal" role="dialog" aria-modal="true" aria-labelledby="globalRankingTitle" aria-hidden="true"><section id="globalRankingCard"><h2 id="globalRankingTitle">🏆 Ranking mundial</h2><p>Top 10 · mejor día alcanzado por jugador</p><div id="globalRankingStatus" role="status" aria-live="polite">Toca para cargar el ranking.</div><div id="globalRankingRows"></div><p>Solo aparecen jugadores que aceptaron participar. Se muestra el avatar pixel art de su cuenta, no su foto local.</p><div class="globalRankingActions"><button id="globalRankingAccount" type="button">Participar</button><button id="closeGlobalRanking" type="button">Cerrar</button></div></section></div>
+<div id="accountsPanel" role="dialog" aria-modal="true" aria-labelledby="accountsTitle" aria-hidden="true"><div class="accountCard"><h2 id="accountsTitle">👤 Perfil y cuenta</h2><div class="hvAccountTabs"><button id="hvTabLocal" type="button" aria-pressed="true">Local</button><button id="hvTabCloud" type="button" aria-pressed="false">Cuenta</button><button id="hvTabFriends" type="button" aria-pressed="false">Amigos</button></div><section id="hvLocalArea"><label for="nameIn">Nickname o nombre visible</label><input id="nameIn" maxlength="12" placeholder="Granjero" autocomplete="off" spellcheck="false"><p class="accountNote">Tu nickname se guarda en este dispositivo y aparece en tus partidas.</p><label>Foto de perfil local</label><div class="accountButtons"><button id="chooseProfilePhoto" type="button" style="background:#397eb4">📷 Elegir foto</button><button id="removeProfilePhoto" type="button" style="background:#7354a6">Quitar foto</button></div><input id="profilePhotoInput" type="file" accept="image/*" style="display:none"><p class="accountNote">La foto se guarda únicamente en este dispositivo.</p><div id="profileAccountStatus" role="status" aria-live="polite"></div></section><section id="hvCloudArea" class="hvInactive"><div id="hvAuthState" class="hvAccountStatus" role="status" aria-live="polite">Conectando…</div><form id="hvAuthForm" onsubmit="return false"><p class="accountNote">Para una cuenta recuperable, usa tu correo real y crea una contraseña exclusiva para Harvest Valley; no uses la contraseña de tu correo.</p><label for="hvEmail">Correo electrónico</label><input id="hvEmail" type="email" autocomplete="email" maxlength="254" placeholder="correo@ejemplo.com"><label for="hvPassword">Contraseña del juego</label><input id="hvPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres"><div class="accountButtons"><button id="hvSignIn" type="button">Iniciar sesión</button><button id="hvSignUp" type="button" disabled>Crear cuenta</button></div><button id="hvGuestSignIn" type="button" style="width:100%;min-height:38px;margin-top:7px;background:#397eb4">Entrar como invitado</button><p class="accountNote">Invitado: no pide correo ni contraseña, pero el perfil queda ligado a este navegador; si borras sus datos o cambias de dispositivo, podrías perderlo.</p><p id="hvSignupNotice" class="accountNote" hidden>El registro con correo se activa cuando el envío y la verificación de correos estén configurados. No desactivaremos la confirmación.</p><div id="hvAuthStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></form><div id="hvSignedInArea" class="hvInactive"><p class="accountNote">Correo privado: <b id="hvAccountEmail">—</b></p><div class="hvPublicIdLine">Tu ID de jugador <strong id="hvOwnPublicId">—</strong><button id="hvCopyOwnId" type="button">Copiar</button></div><label for="hvCloudNickname">Nickname público</label><input id="hvCloudNickname" maxlength="12" autocomplete="off"><label class="hvCheck"><input id="hvDiscoverable" type="checkbox"> Permitir que me encuentren en búsquedas</label><fieldset class="hvPrefs"><legend>Ranking mundial · opcional</legend><label class="hvCheck"><input id="hvLeaderboardOptIn" type="checkbox"> Mostrar mi nickname, avatar y mejor día</label><p class="accountNote">Tu avatar pixel art de cuenta y récord serán visibles públicamente. La foto local no se sube.</p><button id="hvSaveLeaderboardOptIn" type="button">Guardar participación</button><div id="hvLeaderboardPrefStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></fieldset><button id="hvSaveCloudProfile" type="button">Guardar perfil</button><div id="hvCloudProfileStatus" class="hvAccountStatus" role="status" aria-live="polite"></div><fieldset class="hvPrefs"><legend>Notificaciones por correo · opcionales</legend><label class="hvCheck"><input id="hvUpdatesOptIn" type="checkbox"> Avisos de actualizaciones</label><label class="hvCheck"><input id="hvGiftsOptIn" type="checkbox"> Avisos de regalos</label><button id="hvSaveNotificationPrefs" type="button">Guardar preferencias</button><div id="hvNotificationStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></fieldset><button id="hvSignOut" type="button" class="hvSignOut">Cerrar sesión</button></div></section><section id="hvFriendsArea" class="hvInactive"><div id="hvSocialStatus" class="hvAccountStatus" role="status" aria-live="polite">Inicia sesión para usar Amigos.</div><div class="hvSearchRow"><input id="hvSearchInput" maxlength="30" placeholder="Nickname o ID de jugador" autocomplete="off"><button id="hvSearchBtn" type="button">Buscar</button></div><div class="accountButtons"><button id="hvRecentBtn" type="button">Recientes</button><button id="hvRefreshSocial" type="button">Actualizar listas</button></div><h3>Resultados</h3><div id="hvSearchResults" class="hvPlayerList"></div><h3>Amigos</h3><div id="hvFriendsList" class="hvPlayerList"></div><h3>Solicitudes recibidas</h3><div id="hvIncomingList" class="hvPlayerList"></div><h3>Solicitudes enviadas</h3><div id="hvOutgoingList" class="hvPlayerList"></div></section><div id="hvProfileModal" role="dialog" aria-modal="true" aria-labelledby="hvProfileName" aria-hidden="true"><div class="hvProfileCard"><button id="hvCloseProfile" type="button" class="hvProfileClose" aria-label="Cerrar perfil">×</button><div id="hvProfileAvatar"></div><h3 id="hvProfileName">Jugador</h3><div class="hvPublicIdLine">ID <strong id="hvProfileId">—</strong><button id="hvCopyProfileId" type="button">Copiar</button></div><p id="hvProfileActivity"></p><button id="hvProfileFriendAction" type="button"></button><div id="hvProfileStatus" class="hvAccountStatus" role="status" aria-live="polite"></div></div></div><button id="closeAccounts" type="button">Listo</button></div></div>
 <div id="onlineLobby"><div class="card"><h2>🌐 Partida privada · beta</h2><p>El servidor ya está configurado. Crea una sala y comparte el código; la otra persona solo tendrá que escribirlo.</p><input id="onlineServerUrl" type="hidden" value="wss://valley-mexico.onrender.com"><button id="onlineHost" style="background:#4c9147">Crear sala y mundo nuevo</button><label for="onlineRoomCode">Código de sala</label><input id="onlineRoomCode" maxlength="8" placeholder="Código que te compartieron" autocomplete="off" spellcheck="false"><button id="onlineJoin" style="background:#397eb4">Unirme a la sala</button><div id="onlineLobbyStatus" role="status">Listo para conectar con el servidor del juego.</div><button id="onlineLobbyBack" style="background:#61584b">Volver</button></div></div>
 <div id="worlds"><div class="card"><h2 style="margin:0;font-size:20px">📂 Mundos guardados</h2><p style="font-size:10px;line-height:1.35;margin:5px 0;color:#d6deea">Respalda tus mundos para transferirlos entre archivos o navegadores.</p><div style="display:flex;gap:7px;margin:7px 0"><button id="exportBackup" style="flex:1;height:36px;background:#397eb4;border-radius:6px;font-size:11px">⬇ Exportar respaldo</button><button id="importBackup" style="flex:1;height:36px;background:#4c9147;border-radius:6px;font-size:11px">⬆ Importar respaldo</button></div><input id="backupFile" type="file" accept=".json,application/json" style="display:none"><div id="backupStatus" style="font-size:9px;line-height:1.3;color:#d6deea;margin-bottom:5px"></div><div id="worldList"></div><button id="worldsBack" style="width:100%;background:#61584b">Volver</button></div></div>
 </div>
@@ -1164,16 +1185,16 @@ function serializeDonkeys(){return donkeys.slice(0,3).map(d=>({id:String(d.id),x
 // --- CASA INTERIOR ---
 let inHouse=false,inBotHouse=false,botHouseChestOpen=false,botHousePlayer={x:0,y:0,dir:'up',walk:0},inMine=false,mineReturnPos=null;
 let savedExteriorPos={x:145,y:245};
-let houseRect={x1:95,x2:171,y1:194,y2:246};
+let farmhousePos=(()=>{try{let p=JSON.parse(localStorage.hvd_farmhousePos||'null');if(p&&Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y)))return{x:Math.max(32,Math.min(WW-120,Math.round(Number(p.x)))),y:Math.max(WT+24,Math.min(WB-112,Math.round(Number(p.y))))};}catch(e){}return{x:90,y:170};})();
+let shopStallPos=(()=>{try{let p=JSON.parse(localStorage.hvd_shopStallPos||'null');if(p&&Number.isFinite(Number(p.x))&&Number.isFinite(Number(p.y)))return{x:Math.max(10,Math.min(WW-70,Math.round(Number(p.x)))),y:Math.max(WT+18,Math.min(WB-62,Math.round(Number(p.y))))};}catch(e){}return{x:296,y:220};})();
+let houseRect,doorRect,houseWalls,exitPos;
 const ONLINE_GUEST_HOUSE={x:184,y:170,w:82,h:80};
-let doorRect={x1:114,x2:138,y1:214,y2:248};
-let houseWalls=[
-  {x1:90,x2:177,y1:165,y2:214}, // techo y pared frontal superior
-  {x1:90,x2:114,y1:214,y2:248}, // lado izquierdo de la entrada
-  {x1:138,x2:177,y1:214,y2:248} // lado derecho de la entrada
-];
-const shopCollision={x1:290,x2:350,y1:208,y2:270};
-let exitPos={x:126,y:262}; // punto seguro fuera de colisión
+function updateFarmhouseGeometry(){let x=farmhousePos.x,y=farmhousePos.y;houseRect={x1:x+5,x2:x+81,y1:y+24,y2:y+76};doorRect={x1:x+24,x2:x+48,y1:y+44,y2:y+78};houseWalls=[{x1:x,x2:x+87,y1:y-5,y2:y+44},{x1:x,x2:x+24,y1:y+44,y2:y+78},{x1:x+48,x2:x+87,y1:y+44,y2:y+78}];exitPos={x:x+36,y:y+92};}
+updateFarmhouseGeometry();
+let shopCollision={x1:shopStallPos.x-6,x2:shopStallPos.x+54,y1:shopStallPos.y-12,y2:shopStallPos.y+50};
+function updateShopCollision(){shopCollision={x1:shopStallPos.x-6,x2:shopStallPos.x+54,y1:shopStallPos.y-12,y2:shopStallPos.y+50};}
+function relocateFarmhouse(x,y){farmhousePos={x:Math.round(x),y:Math.round(y)};updateFarmhouseGeometry();save();}
+function relocateShopStall(x,y){shopStallPos={x:Math.round(x),y:Math.round(y)};updateShopCollision();save();}
 
 let interiorW=320, interiorH=240;
 let bedPos={x:40,y:40,w:56,h:36};
@@ -1278,11 +1299,11 @@ const MAX_LAMPS_WITHOUT_SOLAR=5;let lampInventory=Math.max(0,+(localStorage.hvd_
 let hasSolarGenerator=localStorage.hvd_solarGeneratorOwned==='true',solarGeneratorPos=(()=>{try{let p=JSON.parse(localStorage.hvd_solarGeneratorPos||'null');return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:+p.x,y:+p.y,w:36,h:28}:null;}catch(e){return null;}})();if(solarGeneratorPos)hasSolarGenerator=true;const DOG_HOUSE_PRICE=25;let dogHouseOwned=localStorage.hvd_dogHouseOwned==='true',dogHousePos=(()=>{try{let p=JSON.parse(localStorage.hvd_dogHousePos||'null');return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:+p.x,y:+p.y,w:32,h:28}:null;}catch(e){return null;}})();if(dogHousePos)dogHouseOwned=true;const ROBERTO_HOUSE_PRICE=50;let robertoHouseOwned=localStorage.hvd_robertoHouseOwned==='true',robertoHousePos=(()=>{try{let p=JSON.parse(localStorage.hvd_robertoHousePos||'null');return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:+p.x,y:+p.y,w:40,h:32}:null;}catch(e){return null;}})();if(robertoHousePos)robertoHouseOwned=true;let solarGeneratorPower=Math.round(Math.max(0,Math.min(100,Number(localStorage.hvd_solarGeneratorPower)||0))/5)*5,solarCharging=false;
 let placedLamps=JSON.parse(localStorage.hvd_placedLamps||'[]');
 let nextDuckEggAt=+(localStorage.hvd_nextDuckEggAt??0)||Date.now()+90000+Math.random()*90000;
-let enemies=JSON.parse(localStorage.hvd_enemies||'[]');
+let enemies=JSON.parse(localStorage.hvd_enemies||'[]'),skeletonPackSpawned=false;
 for(const e of enemies){if(insideJunkyard(e.x,e.y)||junkyardWallPoint(e.x,e.y)||junkyardGateLane(e.x,e.y)){e.x=JUNKYARD_GATE.x;e.y=JUNKYARD_GATE.y+62;e.hopping=false;e.jumpHeight=0;}}
 let lootDrops=JSON.parse(localStorage.hvd_lootDrops||'[]');
 let duckRespawns=JSON.parse(localStorage.hvd_duckRespawns||'[]');
-let lastEnemySpawn=0;
+let lastEnemySpawn=0,nightEnemySpawnNoticeDay=-1;
 // Nahual: hombre lobo de la selva (solo de noche, solo en JUNGLE)
 let nahual={active:false,x:0,y:0,dir:"right",frame:0,walk:0,atkAccum:0,scratchAnim:0,retreat:false,spawnTimer:0};
 let nahualAmuletUses=Math.max(0,Math.min(5,Math.floor(Number(localStorage.hvd_nahualAmuletUses)||0))),nahualJungleVisitProtected=localStorage.hvd_nahualJungleVisitProtected==='true',nahualJungleVisitUsesAmulet=localStorage.hvd_nahualJungleVisitUsesAmulet==='true',nahualPlayerWasInJungle=!inHouse&&!inMine&&inJungle(player.x,player.y);
@@ -1416,9 +1437,9 @@ let activeFishJump=null;
 let bitePixels=[];
 let nextDuckFishingAt=performance.now()+20000+Math.random()*70000;
 function inPond(x,y){return x>=PONDR.x1&&x<=PONDR.x2&&y>=PONDR.y1&&y<=PONDR.y2;}
-const WILDFLOWER_PATCHES=(()=>{let rnd=mulb(SEED+9367),out=[],tries=0;while(out.length<720&&tries<14000){tries++;let x=16+rnd()*(WW-32),y=WT+24+rnd()*(WB-WT-48);if(inDesert(x,y)||inSea(x,y)||inBeach(x,y)||inJungle(x,y)||inJaguarTempleClearance(x,y,10))continue;if((y>248&&y<300)||(x>428&&x<480))continue;if(x>88&&x<180&&y>162&&y<256)continue;if(x>shopCollision.x1-12&&x<shopCollision.x2+12&&y>shopCollision.y1-12&&y<shopCollision.y2+12)continue;if(x>MOUNTAIN_BOX.x1-20&&x<MOUNTAIN_BOX.x2+20&&y>MOUNTAIN_BOX.y1-20&&y<MOUNTAIN_BOX.y2+20)continue;if(inPond(x,y)||inRiver(x,y)||inCemetery(x,y,12)||(x>JUNKYARD.x-10&&x<JUNKYARD.x+JUNKYARD.w+10&&y>JUNKYARD.y-10&&y<JUNKYARD.y+JUNKYARD.h+10))continue;out.push({x:Math.round(x),y:Math.round(y),kind:Math.floor(rnd()*5),blooms:1+Math.floor(rnd()*3),phase:rnd()*Math.PI*2,variant:rnd()});}return out;})();
+const WILDFLOWER_PATCHES=(()=>{let rnd=mulb(SEED+9367),out=[],tries=0;while(out.length<720&&tries<14000){tries++;let x=16+rnd()*(WW-32),y=WT+24+rnd()*(WB-WT-48);if(inDesert(x,y)||inSea(x,y)||inBeach(x,y)||inJungle(x,y)||inJaguarTempleClearance(x,y,10))continue;if((y>248&&y<300)||(x>428&&x<480))continue;if(x>farmhousePos.x-8&&x<farmhousePos.x+96&&y>farmhousePos.y-12&&y<farmhousePos.y+90)continue;if(x>shopCollision.x1-12&&x<shopCollision.x2+12&&y>shopCollision.y1-12&&y<shopCollision.y2+12)continue;if(x>MOUNTAIN_BOX.x1-20&&x<MOUNTAIN_BOX.x2+20&&y>MOUNTAIN_BOX.y1-20&&y<MOUNTAIN_BOX.y2+20)continue;if(inPond(x,y)||inRiver(x,y)||inCemetery(x,y,12)||(x>JUNKYARD.x-10&&x<JUNKYARD.x+JUNKYARD.w+10&&y>JUNKYARD.y-10&&y<JUNKYARD.y+JUNKYARD.h+10))continue;out.push({x:Math.round(x),y:Math.round(y),kind:Math.floor(rnd()*5),blooms:1+Math.floor(rnd()*3),phase:rnd()*Math.PI*2,variant:rnd()});}return out;})();
 // Arbustos decorativos (pocos, sin colisión): copa lisa con borde negro.
-const BUSHES=(()=>{let rnd=mulb(SEED+31337),out=[],tries=0;while(out.length<64&&tries<9000){tries++;let x=24+rnd()*(WW-48),y=WT+40+rnd()*(WB-WT-80);if(inDesert(x,y)||inSea(x,y)||inBeach(x,y)||inJungle(x,y)||inJaguarTempleClearance(x,y,20))continue;if((y>240&&y<310)||(x>420&&x<490))continue;if(x>70&&x<200&&y>150&&y<270)continue;if(x>shopCollision.x1-30&&x<shopCollision.x2+30&&y>shopCollision.y1-30&&y<shopCollision.y2+30)continue;if(x>MOUNTAIN_BOX.x1-30&&x<MOUNTAIN_BOX.x2+30&&y>MOUNTAIN_BOX.y1-30&&y<MOUNTAIN_BOX.y2+30)continue;if(inPond(x,y)||riverNearest(x,y).distance<95||inCemetery(x,y,20)||(x>JUNKYARD.x-30&&x<JUNKYARD.x+JUNKYARD.w+30&&y>JUNKYARD.y-30&&y<JUNKYARD.y+JUNKYARD.h+30))continue;if(out.some(b=>Math.hypot(b.x-x,b.y-y)<110))continue;out.push({x:Math.round(x),y:Math.round(y),v:Math.floor(rnd()*3)});}return out;})();
+const BUSHES=(()=>{let rnd=mulb(SEED+31337),out=[],tries=0;while(out.length<64&&tries<9000){tries++;let x=24+rnd()*(WW-48),y=WT+40+rnd()*(WB-WT-80);if(inDesert(x,y)||inSea(x,y)||inBeach(x,y)||inJungle(x,y)||inJaguarTempleClearance(x,y,20))continue;if((y>240&&y<310)||(x>420&&x<490))continue;if(x>farmhousePos.x-20&&x<farmhousePos.x+110&&y>farmhousePos.y-20&&y<farmhousePos.y+100)continue;if(x>shopCollision.x1-30&&x<shopCollision.x2+30&&y>shopCollision.y1-30&&y<shopCollision.y2+30)continue;if(x>MOUNTAIN_BOX.x1-30&&x<MOUNTAIN_BOX.x2+30&&y>MOUNTAIN_BOX.y1-30&&y<MOUNTAIN_BOX.y2+30)continue;if(inPond(x,y)||riverNearest(x,y).distance<95||inCemetery(x,y,20)||(x>JUNKYARD.x-30&&x<JUNKYARD.x+JUNKYARD.w+30&&y>JUNKYARD.y-30&&y<JUNKYARD.y+JUNKYARD.h+30))continue;if(out.some(b=>Math.hypot(b.x-x,b.y-y)<110))continue;out.push({x:Math.round(x),y:Math.round(y),v:Math.floor(rnd()*3)});}return out;})();
 const BUSH_COLORS=[['#3f9e3a','#63bf52'],['#4aa83f','#72ca5c'],['#358f38','#58b04e']];
 function drawBushes(){
   if(inHouse||inMine)return;
@@ -2158,6 +2179,8 @@ function drawSleepZ(a){
 
 function save(){
 if(!running) return false;
+window.__HVDCurrentDay=Math.max(1,Math.floor(Number(day)||1));
+if(window.HVLeaderboard&&typeof window.HVLeaderboard.submitDay==='function')window.HVLeaderboard.submitDay(window.__HVDCurrentDay).catch(()=>{});
 HVD.beginSaveBatch();
 if(!inHouse&&!inMine){localStorage.hvd_px=Math.round(player.x);localStorage.hvd_py=Math.round(player.y);}
 HVD.touch(wid,{day:day,coins:coins});
@@ -2172,7 +2195,7 @@ localStorage.hvd_day=day;localStorage.hvd_dayTime=dayTime;localStorage.hvd_sheil
 localStorage.hvd_hp=playerHp;
 localStorage.hvd_sword=hasSword;localStorage.hvd_swordDurability=swordDurability;
 localStorage.hvd_bow=hasBow;localStorage.hvd_bowDurability=bowDurability;localStorage.hvd_bowEquipped=bowEquipped;localStorage.hvd_equippedWeapon=equippedWeapon;
-localStorage.hvd_lampInventory=lampInventory;localStorage.hvd_placedLamps=JSON.stringify(placedLamps);localStorage.hvd_solarGeneratorOwned=hasSolarGenerator;localStorage.hvd_solarGeneratorPos=JSON.stringify(solarGeneratorPos);localStorage.hvd_solarGeneratorPower=solarGeneratorPower;localStorage.hvd_nextDuckEggAt=nextDuckEggAt;localStorage.hvd_dogHouseOwned=dogHouseOwned;localStorage.hvd_dogHousePos=JSON.stringify(dogHousePos);localStorage.hvd_robertoHouseOwned=robertoHouseOwned;localStorage.hvd_robertoHousePos=JSON.stringify(robertoHousePos);
+localStorage.hvd_lampInventory=lampInventory;localStorage.hvd_placedLamps=JSON.stringify(placedLamps);localStorage.hvd_solarGeneratorOwned=hasSolarGenerator;localStorage.hvd_solarGeneratorPos=JSON.stringify(solarGeneratorPos);localStorage.hvd_solarGeneratorPower=solarGeneratorPower;localStorage.hvd_nextDuckEggAt=nextDuckEggAt;localStorage.hvd_dogHouseOwned=dogHouseOwned;localStorage.hvd_dogHousePos=JSON.stringify(dogHousePos);localStorage.hvd_robertoHouseOwned=robertoHouseOwned;localStorage.hvd_robertoHousePos=JSON.stringify(robertoHousePos);localStorage.hvd_farmhousePos=JSON.stringify(farmhousePos);localStorage.hvd_shopStallPos=JSON.stringify(shopStallPos);
 localStorage.hvd_handlamp=hasHandLamp;localStorage.hvd_handLampOn=handLampOn;localStorage.hvd_lampBatterySeconds=lampBatterySeconds;
 localStorage.hvd_axe=hasAxe;localStorage.hvd_pickaxe=hasPickaxe;localStorage.hvd_pickaxeDurability=pickaxeDurability;localStorage.hvd_riverVeins=JSON.stringify(riverVeins);localStorage.hvd_shovel=hasShovel;localStorage.hvd_shovelDurability=shovelDurability;localStorage.hvd_dugPatches=JSON.stringify(dugPatches);
 localStorage.hvd_trees=JSON.stringify(trees);
@@ -2184,12 +2207,12 @@ localStorage.hvd_woodCutter=hasWoodCutter;localStorage.hvd_woodCutterPos=JSON.st
 localStorage.hvd_ownedCosmetics=JSON.stringify(ownedCosmetics);localStorage.hvd_equippedCosmetic=equippedCosmetic;
 localStorage.hvd_fences=JSON.stringify(fences);localStorage.hvd_roadSegments=JSON.stringify(roadSegments);localStorage.hvd_junkyardGateOpen=junkyardGateOpen;localStorage.hvd_junkyardChestReadyAt=junkyardChestReadyAt;
 localStorage.hvd_animals=JSON.stringify(animals.map(a=>({x:Math.round(a.x),y:Math.round(a.y),type:a.type,dir:a.dir,ready:a.ready,cd:a.cd,bornDay:a.type==='cow'?a.bornDay:undefined,nextMilkAt:a.type==='cow'?a.nextMilkAt:undefined,nextEggAt:a.type==='chicken'?a.nextEggAt:undefined,readyCount:a.type==='chicken'?a.readyCount:undefined,zombieHp:a.type==='zombieChicken'?a.hp:undefined,zombieNextShotAt:a.type==='zombieChicken'?a.zombieNextShotAt:undefined})));
-localStorage.hvd_enemies=JSON.stringify(enemies.map(e=>({x:Math.round(e.x),y:Math.round(e.y),type:e.type,hp:e.hp})));
+localStorage.hvd_enemies=JSON.stringify(enemies.filter(e=>e.type!=='skeleton').map(e=>({x:Math.round(e.x),y:Math.round(e.y),type:e.type,hp:e.hp,maxHp:e.maxHp,elite:e.elite})));
 localStorage.hvd_lootDrops=JSON.stringify(lootDrops);localStorage.hvd_duckRespawns=JSON.stringify(duckRespawns);
 localStorage.hvd_chest1=JSON.stringify(chest1Inv);
 localStorage.hvd_chest2=JSON.stringify(chest2Inv);
 localStorage.hvd_picked=JSON.stringify([...picked]);localStorage.hvd_crops=JSON.stringify(crops);localStorage.hvd_farmerRobotOwned=farmerRobotOwned;localStorage.hvd_farmerRobotPos=JSON.stringify(farmerRobotPos);localStorage.hvd_farmerRobotNextPlankAt=farmerRobotNextPlankAt;localStorage.hvd_missionFlags=JSON.stringify(missionFlags);localStorage.hvd_notifications=JSON.stringify(notificationHistory);
-const verify=[['hvd_ridingSkillOwned',String(ridingSkillOwned)],['hvd_donkeys',JSON.stringify(serializeDonkeys())],['hvd_day',day],['hvd_dayTime',dayTime],['hvd_roberto',JSON.stringify(roberto)],['hvd_coins',coins],['hvd_fruit',fruit],['hvd_apples',apples],['hvd_wood',wood],['hvd_stone',stone],['hvd_crops',JSON.stringify(crops)],['hvd_animals',JSON.stringify(animals.map(a=>({x:Math.round(a.x),y:Math.round(a.y),type:a.type,dir:a.dir,ready:a.ready,cd:a.cd,bornDay:a.type==='cow'?a.bornDay:undefined,nextMilkAt:a.type==='cow'?a.nextMilkAt:undefined,nextEggAt:a.type==='chicken'?a.nextEggAt:undefined,readyCount:a.type==='chicken'?a.readyCount:undefined,zombieHp:a.type==='zombieChicken'?a.hp:undefined,zombieNextShotAt:a.type==='zombieChicken'?a.zombieNextShotAt:undefined})))],['hvd_shovel',String(hasShovel)],['hvd_shovelDurability',String(shovelDurability)],['hvd_dugPatches',JSON.stringify(dugPatches)],['hvd_dogHouseOwned',String(dogHouseOwned)],['hvd_dogHousePos',JSON.stringify(dogHousePos)],['hvd_robertoHouseOwned',String(robertoHouseOwned)],['hvd_robertoHousePos',JSON.stringify(robertoHousePos)],['hvd_smallDogFetchUntil',String(smallDog.fetchUntil||0)],['hvd_smallDogPendingMeal',String(smallDog.pendingMeal||'')]];
+const verify=[['hvd_ridingSkillOwned',String(ridingSkillOwned)],['hvd_donkeys',JSON.stringify(serializeDonkeys())],['hvd_day',day],['hvd_dayTime',dayTime],['hvd_roberto',JSON.stringify(roberto)],['hvd_coins',coins],['hvd_fruit',fruit],['hvd_apples',apples],['hvd_wood',wood],['hvd_stone',stone],['hvd_crops',JSON.stringify(crops)],['hvd_animals',JSON.stringify(animals.map(a=>({x:Math.round(a.x),y:Math.round(a.y),type:a.type,dir:a.dir,ready:a.ready,cd:a.cd,bornDay:a.type==='cow'?a.bornDay:undefined,nextMilkAt:a.type==='cow'?a.nextMilkAt:undefined,nextEggAt:a.type==='chicken'?a.nextEggAt:undefined,readyCount:a.type==='chicken'?a.readyCount:undefined,zombieHp:a.type==='zombieChicken'?a.hp:undefined,zombieNextShotAt:a.type==='zombieChicken'?a.zombieNextShotAt:undefined})))],['hvd_shovel',String(hasShovel)],['hvd_shovelDurability',String(shovelDurability)],['hvd_dugPatches',JSON.stringify(dugPatches)],['hvd_dogHouseOwned',String(dogHouseOwned)],['hvd_dogHousePos',JSON.stringify(dogHousePos)],['hvd_robertoHouseOwned',String(robertoHouseOwned)],['hvd_robertoHousePos',JSON.stringify(robertoHousePos)],['hvd_farmhousePos',JSON.stringify(farmhousePos)],['hvd_shopStallPos',JSON.stringify(shopStallPos)],['hvd_smallDogFetchUntil',String(smallDog.fetchUntil||0)],['hvd_smallDogPendingMeal',String(smallDog.pendingMeal||'')]];
 if(!inHouse&&!inMine){verify.push(['hvd_px',Math.round(player.x)],['hvd_py',Math.round(player.y)]);}
 const worldRecord=HVD.listWorlds().find(w=>String(w.id)===String(wid));
 return HVD.hasPersistentStorage()&&!HVD.saveBatchFailed()&&verify.every(([key,value])=>String(localStorage[key])===String(value))&&!!worldRecord&&Number(worldRecord.day)===Number(day)&&Number(worldRecord.coins)===Number(coins);
@@ -2867,8 +2890,8 @@ function drawBehindCanopies(){
 function drawBehindStructures(){
   if(inHouse||inMine)return;
   let px=player.x,py=player.y,list=[
-    [86,160,182,256,200,()=>drawFarmhouse(90-cam.x,170-cam.y)],
-    [288,200,352,268,236,()=>drawShopStall(296-cam.x,220-cam.y)],
+    [farmhousePos.x-4,farmhousePos.y-10,farmhousePos.x+92,farmhousePos.y+86,farmhousePos.y+30,()=>drawFarmhouse(farmhousePos.x-cam.x,farmhousePos.y-cam.y)],
+    [shopCollision.x1-2,shopCollision.y1-8,shopCollision.x2+2,shopCollision.y2-2,shopStallPos.y+16,()=>drawShopStall(shopStallPos.x-cam.x,shopStallPos.y-cam.y)],
     [580,36,640,92,56,drawWellArt]
   ];
   if(window.HVOnline&&window.HVOnline.session)list.push([ONLINE_GUEST_HOUSE.x-4,ONLINE_GUEST_HOUSE.y-5,ONLINE_GUEST_HOUSE.x+ONLINE_GUEST_HOUSE.w+4,ONLINE_GUEST_HOUSE.y+ONLINE_GUEST_HOUSE.h,ONLINE_GUEST_HOUSE.y+39,()=>drawGuestFarmhouse(ONLINE_GUEST_HOUSE.x-cam.x,ONLINE_GUEST_HOUSE.y-cam.y)]);
@@ -3025,11 +3048,15 @@ function shootBow(){
 function spawnDuckFeathers(x,y){
   for(let i=0;i<16;i++){let a=Math.random()*Math.PI*2,s=0.8+Math.random()*2.8;duckFeathers.push({x:x+6,y:y+5,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1.2,life:35+Math.random()*25,rot:Math.random()*6});}
 }
+function enemyName(e){if(!e)return 'enemigo';if(e.elite)return e.type==='spider'?'araña acorazada':e.type==='bat'?'murciélago vampiro':e.type==='giantFrog'?'rana gigante':'enemigo';return e.type==='spider'?'araña':e.type==='bat'?'murciélago':e.type==='skeleton'?'esqueleto':e.type==='giantFrog'?'rana gigante':'enemigo';}
+function enemyA(e){return e&&['spider','giantFrog'].includes(e.type)?'a la '+enemyName(e):'al '+enemyName(e);}
+function enemyTitle(e){let n=enemyName(e);return n.charAt(0).toUpperCase()+n.slice(1);}
 function dropForKilledEnemy(e){
   if(e.type==='giantFrog'){lootDrops.push({x:e.x+12,y:e.y+12,type:'luminousDiamond'});msg('¡Rana gigante derrotada! Dejó un diamante luminoso en el suelo. +10 XP');return;}
+  if(e.type==='skeleton'){lootDrops.push({x:e.x+2,y:e.y+5,type:'bone'},{x:e.x+10,y:e.y+5,type:'bone'});msg('¡Derrotaste al esqueleto! Dejó 2 huesos.');return;}
   let type=e.type==='spider'?'web':'deathPearl';
   lootDrops.push({x:e.x+4,y:e.y+5,type});
-  msg(e.type==='spider'?'¡Araña derrotada! Dejó una telaraña. +10 XP':'¡Murciélago derrotado! Dejó una perla de la muerte. +10 XP');
+  msg('¡Derrotaste '+enemyA(e)+'! Dejó '+(e.type==='spider'?'una telaraña':'una perla de la muerte')+'. +10 XP');
 }
 function hitWithArrow(target,kind){
   if(kind==='jaguar'){damageJaguar(target,5,'La flecha hirió');return;}
@@ -3051,9 +3078,9 @@ function hitWithArrow(target,kind){
     ui();save();return;
   }
   let i=enemies.indexOf(target);if(i<0)return;
-  target.hp=(Number(target.hp)||100)-25;
+  let arrowDamage=target.type==='skeleton'?2:25;target.hp=(Number(target.hp)||100)-arrowDamage;
   if(target.hp<=0){enemies.splice(i,1);dropForKilledEnemy(target);awardXP(10);}
-  else msg('¡Flechazo! '+(target.type==='giantFrog'?'Rana gigante':target.type==='spider'?'Araña':'Murciélago')+' -25❤️ ('+target.hp+'❤️ restantes).');
+  else msg('¡Flechazo! '+enemyTitle(target)+' −'+arrowDamage+' HP ('+target.hp+'/'+(target.maxHp||100)+' HP).');
   save();
 }
 function updateProjectiles(dt){
@@ -3093,6 +3120,24 @@ function drawProjectiles(){
   arrows.forEach(a=>{let x=a.x-cam.x,y=a.y-cam.y,tx=a.target.x+6-cam.x,ty=a.target.y+5-cam.y,ang=Math.atan2(ty-y,tx-x);g.save();g.translate(x,y);g.rotate(ang);RB(-5,-1,10,2,'#8a5a2d');R(3,-2,3,1,'#dedede');R(4,0,2,2,'#dedede');g.restore();});
   duckFeathers.forEach(f=>{let x=f.x-cam.x,y=f.y-cam.y;g.save();g.translate(x,y);g.rotate(f.rot);RB(-1,-4,3,8,'#ddd9c7');R(0,-3,1,5,'#fff9e8');g.restore();});
 }
+function drawSkeletonEnemy(e,x,y){
+  const now=Date.now(),progress=e.state==='emerging'?Math.max(0,Math.min(1,(now-(e.spawnAt||now))/900)):1;
+  if(e.state==='emerging'){x-=Math.round(18*(1-progress));y+=Math.round(11*(1-progress));}
+  const bob=e.state==='idle'?Math.round(Math.sin(now/280+(e.phase||0))):0,step=(e.state==='patrol'||e.state==='chase')?Math.round(Math.sin(now/90+(e.x||0))*2):0;y+=bob;
+  ellipse(x+8,y+22,8,2,'#00000055');
+  // Piernas articuladas y costillas de hueso.
+  R(x+5,y+15,3,6,'#d9d0b7');R(x+10,y+15,3,6,'#c9c0a7');R(x+4-step,y+20,5,2,'#8a795e');R(x+10+step,y+20,5,2,'#8a795e');
+  RB(x+4,y+9,9,8,'#8c826d');RB(x+5,y+9,7,7,'#d5ccb2');R(x+5,y+11,7,1,'#847960');R(x+5,y+13,7,1,'#847960');R(x+6,y+15,5,1,'#847960');
+  // Brazos, cráneo agrietado y ojos verde fantasmal.
+  R(x+2-step,y+10,3,7,'#d8cfb5');R(x+12+step,y+10,3,7,'#c9c0a7');RB(x+4,y+1,9,8,'#8f876f');RB(x+5,y+2,7,6,'#e1d8be');R(x+6,y+4,2,2,'#19211a');R(x+10,y+4,2,2,'#19211a');R(x+6,y+4,1,1,'#a9ff66');R(x+10,y+4,1,1,'#a9ff66');R(x+7,y+7,4,1,'#574c3a');R(x+8,y+8,1,2,'#c4baa0');
+  // Espada visible todo el tiempo; el destello acompaña cada espadazo.
+  const swinging=now<(e.swingUntil||0),blade='#c7d3d3',hilt='#7a4a2b',dir=e.dir||'down';
+  if(dir==='left'){R(x+1,y+11,4,2,'#d8cfb5');R(x-4,y+12,5,1,hilt);R(x-10,y+10,6,2,blade);R(x-5,y+9,1,5,'#e8dfc9');if(swinging){R(x-13,y+7,3,1,'#fff4b0');R(x-14,y+9,2,1,'#d9f8ff');}}
+  else if(dir==='up'){R(x+5,y+10,2,3,'#d8cfb5');R(x+6,y+5,1,5,hilt);R(x+4,y-1,2,6,blade);R(x+3,y+4,4,1,'#e8dfc9');if(swinging){R(x+2,y-4,1,3,'#fff4b0');R(x+4,y-5,1,2,'#d9f8ff');}}
+  else if(dir==='down'){R(x+10,y+10,2,3,'#c9c0a7');R(x+11,y+13,1,4,hilt);R(x+9,y+17,2,5,blade);R(x+8,y+15,4,1,'#e8dfc9');if(swinging){R(x+12,y+20,3,1,'#fff4b0');R(x+14,y+18,2,1,'#d9f8ff');}}
+  else{R(x+12,y+10,3,2,'#c9c0a7');R(x+14,y+11,2,1,hilt);R(x+16,y+7,2,5,blade);R(x+13,y+8,5,1,'#e8dfc9');if(swinging){R(x+18,y+4,3,1,'#fff4b0');R(x+19,y+6,2,1,'#d9f8ff');}}
+  const maxHp=Math.max(1,Number(e.maxHp)||100);if(e.hp<maxHp){RB(x+1,y-3,15,2,'#090b0a');R(x+2,y-2,Math.round(13*e.hp/maxHp),1,'#dc574b');}
+}
 function drawEnemy(e){
   let x=Math.round(e.x-cam.x), y=Math.round(e.y-cam.y);
   if(e.type==='giantFrog'){
@@ -3107,33 +3152,35 @@ function drawEnemy(e){
     let frogMaxHp=e.maxHp||50;if(e.hp<frogMaxHp){RB(x+4,y-2,28,4,'#10140f');R(x+5,y-1,Math.max(0,Math.round(26*e.hp/frogMaxHp)),2,'#ed4c45');}
     return;
   }
+  if(e.type==='skeleton'){drawSkeletonEnemy(e,x,y);return;}
+  if(e.type==='spider'||e.type==='bat'){let eyeY=e.type==='bat'?y+3+Math.round(Math.sin((e.walk||0)*0.25)*2):y+5,pulse=0.36+0.15*Math.sin(performance.now()/115+(e.x||0));g.save();let glow=g.createRadialGradient(x+7,eyeY,1,x+7,eyeY,9);glow.addColorStop(0,'rgba(255,214,78,'+pulse+')');glow.addColorStop(1,'rgba(255,190,40,0)');g.fillStyle=glow;g.beginPath();g.arc(x+7,eyeY,9,0,Math.PI*2);g.fill();g.restore();}
   if(e.type==='spider'){
     // Fase de patas (usa walk o frame)
     let t=(e.walk||0)*0.35, leg=Math.sin(t);
     let a1=Math.round(leg*2), a2=Math.round(-leg*2);
     ellipse(x+7,y+15,8,2.5,'#00000055');
     // 8 patas (4 por lado) con movimiento alternado
-    // Lado izquierdo
-    R(x+1+a1,y+6,3,1,'#2a1c22');R(x-1+a1,y+7,3,1,'#2a1c22'); // delantera
-    R(x+0+a2,y+9,4,1,'#2a1c22');R(x-2+a2,y+10,3,1,'#2a1c22');
-    R(x+1-a1,y+11,4,1,'#2a1c22');R(x-1-a1,y+12,3,1,'#2a1c22');
-    R(x+2-a2,y+13,3,1,'#2a1c22');R(x+0-a2,y+14,3,1,'#2a1c22');
-    // Lado derecho
-    R(x+10-a1,y+6,3,1,'#2a1c22');R(x+12-a1,y+7,3,1,'#2a1c22');
-    R(x+10-a2,y+9,4,1,'#2a1c22');R(x+13-a2,y+10,3,1,'#2a1c22');
-    R(x+10+a1,y+11,4,1,'#2a1c22');R(x+12+a1,y+12,3,1,'#2a1c22');
-    R(x+9+a2,y+13,3,1,'#2a1c22');R(x+11+a2,y+14,3,1,'#2a1c22');
+    // Patas verde musgo con puntas más claras, distintas de las alas del murciélago.
+    R(x+1+a1,y+6,3,1,'#20382e');R(x-1+a1,y+7,3,1,'#294536');
+    R(x+0+a2,y+9,4,1,'#20382e');R(x-2+a2,y+10,3,1,'#294536');
+    R(x+1-a1,y+11,4,1,'#20382e');R(x-1-a1,y+12,3,1,'#294536');
+    R(x+2-a2,y+13,3,1,'#20382e');R(x+0-a2,y+14,3,1,'#294536');
+    R(x+10-a1,y+6,3,1,'#20382e');R(x+12-a1,y+7,3,1,'#294536');
+    R(x+10-a2,y+9,4,1,'#20382e');R(x+13-a2,y+10,3,1,'#294536');
+    R(x+10+a1,y+11,4,1,'#20382e');R(x+12+a1,y+12,3,1,'#294536');
+    R(x+9+a2,y+13,3,1,'#20382e');R(x+11+a2,y+14,3,1,'#294536');
     // Abdomen
-    RB(x+3,y+7,9,7,'#2a1c24');RB(x+4,y+8,7,5,'#4a3038');
-    R(x+5,y+9,2,2,'#6a4048'); // brillo
+    RB(x+3,y+7,9,7,'#1c342b');RB(x+4,y+8,7,5,'#386348');
+    R(x+5,y+9,2,2,'#88b84d');R(x+8,y+11,2,1,'#b2c95c'); // marcas musgo
     // Cefalotórax / cabeza
-    RB(x+4,y+4,7,5,'#3a2830');RB(x+5,y+3,5,3,'#4a3038');
-    // Ojos rojos (pareja)
-    R(x+5,y+4,2,2,'#e04040');R(x+8,y+4,2,2,'#e04040');
-    R(x+5,y+4,1,1,'#ff8080');R(x+8,y+4,1,1,'#ff8080');
+    RB(x+4,y+4,7,5,'#294234');RB(x+5,y+3,5,3,'#527547');
+    // Ojos amarillos brillantes.
+    R(x+5,y+4,2,2,'#ffd447');R(x+8,y+4,2,2,'#ffd447');
+    R(x+5,y+4,1,1,'#fff3a0');R(x+8,y+4,1,1,'#fff3a0');
     // Quelíceros
     R(x+5,y+6,2,1,'#1a1014');R(x+8,y+6,2,1,'#1a1014');
-    if(e.hp<100){RB(x+1,y-1,13,2,'#000');R(x+1,y-1,Math.round(e.hp/100*13),2,purpleHatActive()&&Math.hypot(e.x-player.x,e.y-player.y)<=PURPLE_HAT_RADIUS?'#bd68f2':'#e74c3c');}
+    if(e.elite){R(x+5,y+2,2,1,'#e5c85b');R(x+8,y+2,2,1,'#e5c85b');R(x+5,y+4,2,2,'#ffe15a');R(x+8,y+4,2,2,'#ffe15a');R(x+6,y+10,4,1,'#c6a8ff');}
+    let enemyMaxHp=Math.max(1,Number(e.maxHp)||100);if(e.hp<enemyMaxHp){RB(x+1,y-1,13,2,'#000');R(x+1,y-1,Math.round(enemyMaxHp>0?13*e.hp/enemyMaxHp:0),2,e.elite?'#bd68f2':purpleHatActive()&&Math.hypot(e.x-player.x,e.y-player.y)<=PURPLE_HAT_RADIUS?'#bd68f2':'#e74c3c');}
   } else {
     // Murciélago con aleteo y bob vertical
     let flap=e.frame?1:0;
@@ -3143,54 +3190,101 @@ function drawEnemy(e){
     // Alas (abiertas arriba / recogidas abajo)
     if(flap){
       // Alas desplegadas hacia arriba
-      RB(x-2,wy+1,6,5,'#2a1c28');RB(x-3,wy+2,5,3,'#3a2838');
-      R(x-1,wy+1,3,1,'#4a3848');
-      RB(x+10,wy+1,6,5,'#2a1c28');RB(x+12,wy+2,5,3,'#3a2838');
-      R(x+12,wy+1,3,1,'#4a3848');
+      RB(x-2,wy+1,6,5,'#211b3b');RB(x-3,wy+2,5,3,'#44305c');
+      R(x-1,wy+1,3,1,'#795ba5');
+      RB(x+10,wy+1,6,5,'#211b3b');RB(x+12,wy+2,5,3,'#44305c');
+      R(x+12,wy+1,3,1,'#795ba5');
       // Membrana
-      R(x-2,wy+4,5,2,'#1a1018');R(x+11,wy+4,5,2,'#1a1018');
+      R(x-2,wy+4,5,2,'#141222');R(x+11,wy+4,5,2,'#141222');
     }else{
       // Alas hacia abajo
-      RB(x-1,wy+5,5,5,'#2a1c28');RB(x-2,wy+7,5,3,'#3a2838');
-      RB(x+10,wy+5,5,5,'#2a1c28');RB(x+11,wy+7,5,3,'#3a2838');
-      R(x-1,wy+8,4,2,'#1a1018');R(x+11,wy+8,4,2,'#1a1018');
+      RB(x-1,wy+5,5,5,'#211b3b');RB(x-2,wy+7,5,3,'#44305c');
+      RB(x+10,wy+5,5,5,'#211b3b');RB(x+11,wy+7,5,3,'#44305c');
+      R(x-1,wy+8,4,2,'#141222');R(x+11,wy+8,4,2,'#141222');
     }
     // Cuerpo
-    RB(x+4,wy+4,7,7,'#2a1c28');RB(x+5,wy+5,5,5,'#3a2838');
+    RB(x+4,wy+4,7,7,'#211b3b');RB(x+5,wy+5,5,5,'#49335f');R(x+6,wy+8,3,1,'#ac89d4');
     // Cabeza
-    RB(x+5,wy+2,5,5,'#3a2838');RB(x+6,wy+1,3,3,'#4a3848');
+    RB(x+5,wy+2,5,5,'#49335f');RB(x+6,wy+1,3,3,'#73549c');
     // Orejas puntiagudas
-    R(x+5,wy+0,2,3,'#2a1c28');R(x+8,wy+0,2,3,'#2a1c28');
-    R(x+5,wy+0,1,1,'#4a3848');R(x+9,wy+0,1,1,'#4a3848');
-    // Ojos rojos
-    R(x+6,wy+3,1,1,'#e04040');R(x+8,wy+3,1,1,'#e04040');
+    R(x+5,wy+0,2,3,'#211b3b');R(x+8,wy+0,2,3,'#211b3b');
+    R(x+5,wy+0,1,1,'#a788ca');R(x+9,wy+0,1,1,'#a788ca');
+    // Ojos amarillos luminosos bajo las cejas moradas.
+    R(x+6,wy+3,1,1,'#ffd447');R(x+8,wy+3,1,1,'#ffd447');R(x+6,wy+3,1,1,'#fff3a0');R(x+8,wy+3,1,1,'#fff3a0');
     // Colmillos
     R(x+6,wy+5,1,2,'#e8e0d0');R(x+8,wy+5,1,2,'#e8e0d0');
-    if(e.hp<100){RB(x+1,wy-2,13,2,'#000');R(x+1,wy-2,Math.round(e.hp/100*13),2,purpleHatActive()&&Math.hypot(e.x-player.x,e.y-player.y)<=PURPLE_HAT_RADIUS?'#bd68f2':'#e74c3c');}
+    if(e.elite){R(x+5,wy-2,1,2,'#e5c85b');R(x+9,wy-2,1,2,'#e5c85b');R(x+6,wy+3,1,1,'#fff3a0');R(x+8,wy+3,1,1,'#fff3a0');R(x+6,wy+7,3,1,'#c64f82');}
+    let enemyMaxHp=Math.max(1,Number(e.maxHp)||100);if(e.hp<enemyMaxHp){RB(x+1,wy-2,13,2,'#000');R(x+1,wy-2,Math.round(enemyMaxHp>0?13*e.hp/enemyMaxHp:0),2,e.elite?'#bd68f2':purpleHatActive()&&Math.hypot(e.x-player.x,e.y-player.y)<=PURPLE_HAT_RADIUS?'#bd68f2':'#e74c3c');}
   }
 }
 
+function chooseCemeterySkeletonTarget(e,now=Date.now()){
+  for(let attempt=0;attempt<40;attempt++){
+    let x=CEMETERY_SITE.x+34+Math.random()*(CEMETERY_SITE.w-68),y=CEMETERY_SITE.y+34+Math.random()*(CEMETERY_SITE.h-68);
+    if(Math.hypot(x-e.homeX,y-e.homeY)>205||isBlocked(x,y,'entity'))continue;
+    e.targetX=x;e.targetY=y;e.state='patrol';e.targetSetAt=now;return true;
+  }
+  e.state='idle';e.idleUntil=now+700+Math.random()*900;return false;
+}
+function spawnCemeterySkeletons(){
+  let now=Date.now(),homeX=CEMETERY_SITE.x+CEMETERY_SITE.w/2,homeY=CEMETERY_SITE.y+CEMETERY_SITE.h/2;
+  let tombs=CEMETERY_TOMBS.map((t,i)=>({t,i})).filter(v=>v.i!==cemeteryCat.hideTombIndex).sort(()=>Math.random()-.5).slice(0,5);
+  for(const {t} of tombs){
+    enemies.push({type:'skeleton',x:t.x+24,y:t.y+8,hp:100,maxHp:100,dir:'down',walk:0,state:'emerging',spawnAt:now,homeX,homeY,targetX:t.x+24,targetY:t.y+8,phase:Math.random()*6.28,idleUntil:now+900,nextAttackAt:0,swingUntil:0,attackHit:false});
+  }
+}
+function updateCemeterySkeleton(e,dt,now){
+  if(e.state==='emerging'){
+    if(now-(e.spawnAt||now)>=900){e.state='idle';e.idleUntil=now+500+Math.random()*1100;}
+    return false;
+  }
+  let dist=Math.hypot(player.x-e.x,player.y-e.y);
+  if(e.state==='attack'){
+    if(!e.attackHit&&now>=(e.attackHitAt||0)){
+      e.attackHit=true;
+      if(Math.hypot(player.x-e.x,player.y-e.y)<=38){let damage=applyArmorDamage(25);msg('¡El esqueleto te dio un espadazo! −'+damage+'❤️'+(damage<25?' · La armadura redujo el golpe.':''));ui();if(playerHp<=0){beginDeathRespawn();return true;}}
+    }
+    if(now<(e.swingUntil||0))return false;
+    e.state='chase';
+  }
+  if(dist<185)e.state='chase';
+  if(e.state==='idle'){
+    if(now>=(e.idleUntil||0))chooseCemeterySkeletonTarget(e,now);
+    else return false;
+  }
+  let targetX=e.state==='chase'?player.x:e.targetX,targetY=e.state==='chase'?player.y:e.targetY;
+  if(!Number.isFinite(targetX)||!Number.isFinite(targetY)){chooseCemeterySkeletonTarget(e,now);return false;}
+  let dx=targetX-e.x,dy=targetY-e.y,d=Math.hypot(dx,dy)||1;
+  if(e.state==='patrol'&&d<7){e.state='idle';e.idleUntil=now+900+Math.random()*1800;return false;}
+  if(e.state==='chase'&&d<=32&&now>=(e.nextAttackAt||0)){
+    e.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');e.state='attack';e.swingUntil=now+470;e.attackHitAt=now+220;e.attackHit=false;e.nextAttackAt=now+1550;return false;
+  }
+  if(Math.abs(dx)>Math.abs(dy))e.dir=dx<0?'left':'right';else e.dir=dy<0?'up':'down';
+  let speed=(e.state==='chase'?1.75:0.72)*Math.max(0,Number(dt)||0),base=Math.atan2(dy,dx),offsets=[0,.45,-.45,.9,-.9,1.35,-1.35],moved=false;
+  const minX=e.state==='chase'?5:CEMETERY_SITE.x+18,maxX=e.state==='chase'?WW-20:CEMETERY_SITE.x+CEMETERY_SITE.w-18,minY=e.state==='chase'?WT+5:CEMETERY_SITE.y+18,maxY=e.state==='chase'?WB-20:CEMETERY_SITE.y+CEMETERY_SITE.h-18;
+  for(const off of offsets){let nx=e.x+Math.cos(base+off)*speed,ny=e.y+Math.sin(base+off)*speed;if(nx<minX||nx>maxX||ny<minY||ny>maxY||isBlocked(nx,ny,'entity'))continue;e.x=nx;e.y=ny;e.walk=(e.walk||0)+Math.max(1,Number(dt)||0);moved=true;break;}
+  if(!moved&&e.state==='patrol')chooseCemeterySkeletonTarget(e,now);
+  return false;
+}
 function updateEnemies(dt){
   let isNight=dayTime<0.25 || dayTime>0.8;
-  if(!isNight&&enemies.length){enemies=enemies.filter(e=>e.type==='giantFrog');lastEnemySpawn=0;}
+  if(!isNight){skeletonPackSpawned=false;nightEnemySpawnNoticeDay=-1;if(enemies.length){enemies=enemies.filter(e=>e.type==='giantFrog');lastEnemySpawn=0;}}
   if(inHouse||inBotHouse||gameOver)return;
-  // spawn de noche
-  if(isNight && !sleeping){
+  if(isNight&&!sleeping&&!skeletonPackSpawned){spawnCemeterySkeletons();skeletonPackSpawned=true;}
+  // Cada noche mantiene una población visible cerca de la zona que explora el jugador.
+  if(isNight&&!sleeping){
+    enemies=enemies.filter(e=>!['spider','bat'].includes(e.type)||Math.hypot(e.x-player.x,e.y-player.y)<=620);
     lastEnemySpawn+=dt;
-    if(lastEnemySpawn>3 && enemies.length<8){
-      lastEnemySpawn=0;
-      if(Math.random()<0.6){
-        // spawn lejos de luz
-        let angle=Math.random()*Math.PI*2;
-        let dist=300+Math.random()*200;
-        let sx=player.x+Math.cos(angle)*dist;
-        let sy=player.y+Math.sin(angle)*dist; sx=Math.max(5,Math.min(WW-20,sx)); sy=Math.max(WT+5,Math.min(WB-20,sy));
-        // no spawnear dentro de luz
-        if(!isInLight(sx,sy)&&!isBlocked(sx,sy,'entity')&&!inSea(sx,sy)){ 
-          let type=Math.random()<0.55?'spider':'bat';
-          enemies.push({x:sx,y:sy,type:type,hp:100,maxHp:100,dir:'down',frame:0,walk:0,atkCdSeconds:0});
-        }
+    let roamingNightEnemies=enemies.filter(e=>e.type==='spider'||e.type==='bat').length;
+    if(lastEnemySpawn>0.7&&roamingNightEnemies<16){
+      lastEnemySpawn=0;let sx=0,sy=0,foundSpot=false,nearCount=roamingNightEnemies,minDistance=nearCount<6?105:200,maxDistance=nearCount<6?280:520;
+      for(let attempt=0;attempt<120&&!foundSpot;attempt++){
+        let angle=Math.random()*Math.PI*2,distance=minDistance+Math.random()*(maxDistance-minDistance);
+        sx=Math.round(player.x+Math.cos(angle)*distance);sy=Math.round(player.y+Math.sin(angle)*distance);
+        if(sx<12||sx>WW-24||sy<WT+12||sy>WB-24||isInLight(sx,sy)||purpleHatActive()&&Math.hypot(sx-player.x,sy-player.y)<=PURPLE_HAT_RADIUS+16||isBlocked(sx,sy,'entity')||inPond(sx,sy)||inRiver(sx,sy)||inSea(sx,sy)||inBeach(sx,sy)||insideMountainPolygon(sx,sy)||insideJunkyard(sx,sy)||junkyardWallPoint(sx,sy)||inCemetery(sx,sy,12)||inJaguarTempleClearance(sx,sy,10)||enemies.some(e=>['spider','bat'].includes(e.type)&&Math.hypot(e.x-sx,e.y-sy)<72))continue;
+        foundSpot=true;
       }
+      if(foundSpot){let type=Math.random()<0.55?'spider':'bat',elite=Math.random()<0.22,maxHp=elite?150:100;enemies.push({x:sx,y:sy,type,hp:maxHp,maxHp,elite,dir:'down',frame:0,walk:0,atkCdSeconds:0});if(nightEnemySpawnNoticeDay!==day){nightEnemySpawnNoticeDay=day;msg('¡La noche trajo arañas y murciélagos a los alrededores!');}}
     }
   }
   // AI
@@ -3210,17 +3304,18 @@ function updateEnemies(dt){
       if(distToPlayer<=28&&e.atkCdSeconds<=0){let damage=applyArmorDamage(5);e.atkCdSeconds=1.6;spawnBitePixels(player.x+6,player.y+5);playSnakeBiteSound();msg('¡La rana gigante te golpeó con un salto −'+damage+'❤️!');ui();if(playerHp<=0){beginDeathRespawn();return;}}
       e.atkCdSeconds=Math.max(0,e.atkCdSeconds-sec);continue;
     }
+    if(e.type==='skeleton'){if(updateCemeterySkeleton(e,dt,Date.now()))return;continue;}
     let inPurpleHatRange=purpleHatActive()&&(e.type==='spider'||e.type==='bat')&&distToPlayer<=PURPLE_HAT_RADIUS;
     let inLight=isInLight(e.x,e.y)&&!inPurpleHatRange;
     if(inPurpleHatRange){
       e.hp=Math.max(0,(Number(e.hp)||100)-PURPLE_HAT_DPS*(dt/60));
-      if(e.hp<=0){enemies.splice(i,1);let reward=5+Math.floor(Math.random()*5),lootType=e.type==='spider'?'web':'deathPearl';coins+=reward;lootDrops.push({x:e.x+4,y:e.y+5,type:lootType});ui();msg('La luz púrpura derrotó a '+(e.type==='spider'?'la araña':'el murciélago')+'; dejó '+(e.type==='spider'?'una telaraña':'una perla de la muerte')+'. +'+reward+'🪙 · +10 XP');awardXP(10);continue;}
+      if(e.hp<=0){enemies.splice(i,1);let reward=5+Math.floor(Math.random()*5),lootType=e.type==='spider'?'web':'deathPearl';coins+=reward;lootDrops.push({x:e.x+4,y:e.y+5,type:lootType});ui();msg('La luz púrpura derrotó '+enemyA(e)+'; dejó '+(e.type==='spider'?'una telaraña':'una perla de la muerte')+'. +'+reward+'🪙 · +10 XP');awardXP(10);continue;}
     }
     // El contacto siempre hiere al jugador; no elimina al enemigo ni lo deja huir en plena mordida.
     if(distToPlayer<=24 && e.atkCdSeconds<=0){
-      let damage=applyArmorDamage(5);e.atkCdSeconds=enemyBiteCooldownSeconds;
+      let damage=applyArmorDamage(e.elite?10:5);e.atkCdSeconds=e.elite?1.2:enemyBiteCooldownSeconds;
       spawnBitePixels(player.x+6,player.y+5);playSnakeBiteSound();
-      msg(e.type==='spider'?'¡Araña te mordió −'+damage+'❤️!':'¡Murciélago te mordió −'+damage+'❤️!');ui();
+      msg('¡'+enemyTitle(e)+' te mordió −'+damage+'❤️!');ui();
       if(playerHp<=0){beginDeathRespawn();return;}
     }
     if(distToPlayer<=24){
@@ -3228,17 +3323,17 @@ function updateEnemies(dt){
     } else if(inLight){
       // huir de la luz, pero nunca desaparecer por tocar al jugador
       let ang=Math.atan2(e.y-streetLamp.y,e.x-streetLamp.x);
-      e.x+=Math.cos(ang)*(e.type==='bat'?1.1:0.8);
-      e.y+=Math.sin(ang)*(e.type==='bat'?1.1:0.8);
+      e.x+=Math.cos(ang)*(e.type==='bat'?1.1:0.8)*(e.elite?2:1);
+      e.y+=Math.sin(ang)*(e.type==='bat'?1.1:0.8)*(e.elite?2:1);
       e.dir=Math.abs(Math.cos(ang))>Math.abs(Math.sin(ang))?(Math.cos(ang)<0?'left':'right'):(Math.sin(ang)<0?'up':'down');
-    } else if(distToPlayer<250){
+    } else if(distToPlayer<580){
       let ang=Math.atan2(player.y-e.y,player.x-e.x);
-      e.x+=Math.cos(ang)*(e.type==='bat'?0.9:0.6);
-      e.y+=Math.sin(ang)*(e.type==='bat'?0.9:0.6);
+      e.x+=Math.cos(ang)*(e.type==='bat'?0.9:0.6)*(e.elite?2:1);
+      e.y+=Math.sin(ang)*(e.type==='bat'?0.9:0.6)*(e.elite?2:1);
     } else {
       // vagar
       if(Math.random()<0.02){let dirs=['up','down','left','right'];e.dir=dirs[Math.floor(Math.random()*4)];}
-      let spd=e.type==='bat'?0.5:0.35;
+      let spd=(e.type==='bat'?0.5:0.35)*(e.elite?2:1);
       if(e.dir==='left')e.x-=spd;if(e.dir==='right')e.x+=spd;if(e.dir==='up')e.y-=spd;if(e.dir==='down')e.y+=spd;
     }
     if(e.atkCdSeconds>0)e.atkCdSeconds=Math.max(0,e.atkCdSeconds-dt/60);
@@ -3839,7 +3934,7 @@ function drawMiniMap(){let ctx=miniMapCtx,cw=miniMapCanvas.width,ch=miniMapCanva
   ctx.beginPath();RIVER_POINTS.forEach((p,i)=>{let x=mx(p.x),y=my(p.y);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.strokeStyle='#3bb4d0';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.stroke();
   rect(PONDR.x1-10,PONDR.y1-10,PONDR.x2+10,PONDR.y2+10,'#9b8758');rect(PONDR.x1-5,PONDR.y1-5,PONDR.x2+5,PONDR.y2+5,'#56824b');rect(PONDR.x1,PONDR.y1,PONDR.x2,PONDR.y2,'#39b4d0');
   rect(CEMETERY_SITE.x,CEMETERY_SITE.y,CEMETERY_SITE.x+CEMETERY_SITE.w,CEMETERY_SITE.y+CEMETERY_SITE.h,'#526044');ctx.strokeStyle='#c5b9a0';ctx.lineWidth=1;ctx.strokeRect(mx(JUNKYARD.x),my(JUNKYARD.y),Math.max(2,mx(JUNKYARD.x+JUNKYARD.w)-mx(JUNKYARD.x)),Math.max(2,my(JUNKYARD.y+JUNKYARD.h)-my(JUNKYARD.y)));ctx.strokeStyle='#8b6944';ctx.strokeRect(mx(CEMETERY_SITE.x),my(CEMETERY_SITE.y),Math.max(2,mx(CEMETERY_SITE.x+CEMETERY_SITE.w)-mx(CEMETERY_SITE.x)),Math.max(2,my(CEMETERY_SITE.y+CEMETERY_SITE.h)-my(CEMETERY_SITE.y)));
-  marker(130,220,'#ffe28a',4);marker(320,230,'#e8a64a',3);marker(JUNKYARD.x+JUNKYARD.w/2,JUNKYARD.y+JUNKYARD.h/2,'#ef7956',4);marker(MINE_ENTRANCE.x,MINE_ENTRANCE.y,'#d7e1e5',4);marker(SEA.x1+24,SEA.y2-30,'#69dce8',4);marker(CEMETERY_SITE.x+CEMETERY_SITE.w/2,CEMETERY_SITE.y+CEMETERY_SITE.h/2,'#cba7e8',3);marker((PONDR.x1+PONDR.x2)/2,(PONDR.y1+PONDR.y2)/2,'#8beaff',3);marker(WW/2,JUNGLE.y1+600,'#78d45a',4);marker(JAGUAR_TEMPLE.x,JAGUAR_TEMPLE.y,'#e7c96c',4);
+  marker(farmhousePos.x+40,farmhousePos.y+50,'#ffe28a',4);marker(shopStallPos.x+24,shopStallPos.y+24,'#e8a64a',3);marker(JUNKYARD.x+JUNKYARD.w/2,JUNKYARD.y+JUNKYARD.h/2,'#ef7956',4);marker(MINE_ENTRANCE.x,MINE_ENTRANCE.y,'#d7e1e5',4);marker(SEA.x1+24,SEA.y2-30,'#69dce8',4);marker(CEMETERY_SITE.x+CEMETERY_SITE.w/2,CEMETERY_SITE.y+CEMETERY_SITE.h/2,'#cba7e8',3);marker((PONDR.x1+PONDR.x2)/2,(PONDR.y1+PONDR.y2)/2,'#8beaff',3);marker(WW/2,JUNGLE.y1+600,'#78d45a',4);marker(JAGUAR_TEMPLE.x,JAGUAR_TEMPLE.y,'#e7c96c',4);
   let here=inMine?(mineReturnPos||exitPos):inHouse?(savedExteriorPos||exitPos):player;let px=Math.round(mx(here.x)),py=Math.round(my(here.y));ctx.fillStyle='#f5fff0';ctx.fillRect(px-3,py-3,7,7);ctx.fillStyle='#72ff45';ctx.fillRect(px-2,py-2,5,5);ctx.fillStyle='#f4fff0';ctx.fillRect(px-1,py-1,2,2);ctx.strokeStyle='#d8c28b';ctx.lineWidth=1;ctx.strokeRect(.5,.5,cw-1,ch-1);
 }
 function world(){
@@ -3864,7 +3959,7 @@ function world(){
  // Panteón norteño con doce tumbas, rejas, camino, árbol seco y ofrendas.
  drawCemetery();
  // casita de campo pixel art
- drawFarmhouse(90-cam.x,170-cam.y);drawBotFarmerHome();
+ drawFarmhouse(farmhousePos.x-cam.x,farmhousePos.y-cam.y);drawBotFarmerHome();
  if(window.HVOnline&&window.HVOnline.session)drawGuestFarmhouse(ONLINE_GUEST_HOUSE.x-cam.x,ONLINE_GUEST_HOUSE.y-cam.y);
  // camino de piedra desde el porche hasta el sendero
  for(let py=250;py<282;py+=16)for(let px=108;px<140;px+=16){
@@ -3881,7 +3976,7 @@ function world(){
  // stone well
  drawWellArt();
  // puesto de la tienda con toldo, estantes y letrero
- drawShopStall(296-cam.x,220-cam.y);
+ drawShopStall(shopStallPos.x-cam.x,shopStallPos.y-cam.y);
 
 }
 function drawName(x,y){const n=HVD.getName();if(!n)return;g.save();g.font='bold 10px VT323, monospace';g.textAlign='center';g.lineWidth=3;g.strokeStyle='#352820';g.strokeText(n,x+6,y-30);g.fillStyle='#ffe28a';g.fillText(n,x+6,y-30);g.restore()}
@@ -4052,7 +4147,7 @@ function updateSmallDog(dt){
     if(targetDuck){smallDog.duckTarget=targetDuck;smallDog.returning=false;}
   }
   if(!inHouse&&!sleeping&&!gameOver&&!smallDog.returning){
-    for(let e of enemies){if(e.type!=='spider'&&e.type!=='bat')continue;let d=Math.hypot(e.x-smallDog.x,e.y-smallDog.y);if(d<95&&d<targetDist){targetDist=d;targetEnemy=e;}}
+    for(let e of enemies){if(e.type!=='spider'&&e.type!=='bat'&&e.type!=='skeleton')continue;let d=Math.hypot(e.x-smallDog.x,e.y-smallDog.y);if(d<95&&d<targetDist){targetDist=d;targetEnemy=e;}}
   }
   let alertTarget=targetEnemy||targetCat||targetDuck;
   if(alertTarget){if(smallDog.barkTarget!==alertTarget){smallDog.barkTarget=alertTarget;barkSmallDog(now);}else if(now>=(smallDog.nextChaseBarkAt||0))barkSmallDog(now);}
@@ -4079,7 +4174,7 @@ function updateSmallDog(dt){
   if(smallDog.returning&&!targetDuck&&d<12){smallDog.returning=false;smallDog.action='follow';}
   if(targetEnemy&&targetDist<=30&&now>=smallDog.nextAttackAt){
     targetEnemy.hp=Math.max(0,(Number.isFinite(Number(targetEnemy.hp))?Number(targetEnemy.hp):100)-(smallDogBoostActive(now)?20:10));smallDog.nextAttackAt=now+2000;smallDog.action='attack';smallDog.actionStarted=now;smallDog.actionUntil=now+480;smallDog.dir=targetEnemy.x<smallDog.x?'left':'right';playDogBiteSound();
-    if(targetEnemy.hp<=0){let i=enemies.indexOf(targetEnemy);if(i>=0)enemies.splice(i,1);coins+=5+Math.floor(Math.random()*5);dropForKilledEnemy(targetEnemy);ui();msg('¡Tu perro pequeño derrotó '+(targetEnemy.type==='spider'?'a la araña':'al murciélago')+'! +10 XP');awardXP(10);}
+    if(targetEnemy.hp<=0){let i=enemies.indexOf(targetEnemy);if(i>=0)enemies.splice(i,1);coins+=5+Math.floor(Math.random()*5);dropForKilledEnemy(targetEnemy);ui();msg(targetEnemy.type==='skeleton'?'¡Tu perro pequeño derrotó al esqueleto! Dejó 2 huesos. +10 XP':'¡Tu perro pequeño derrotó '+enemyA(targetEnemy)+'! +10 XP');awardXP(10);}
     else save();
   }
 }
@@ -5427,6 +5522,30 @@ function fenceForwardPoint(distance=32){
   return {x:Math.round((player.x+dx*distance)/16)*16,y:Math.round((player.y+dy*distance)/16)*16,dx,dy};
 }
 function onStreet(x,y){return (y>=250&&y<298)||(x>=430&&x<478);}
+function relocationPlacementReason(b,kind){
+  // Keep preview limits aligned with the per-world position bounds used on reload.
+  let savedPos=kind==='house'?{x:b.x+2,y:b.y+5}:{x:b.x+6,y:b.y+12};
+  let limits=kind==='house'?{minX:32,maxX:WW-120,minY:WT+24,maxY:WB-112}:{minX:10,maxX:WW-70,minY:WT+18,maxY:WB-62};
+  if(savedPos.x<limits.minX||savedPos.x>limits.maxX||savedPos.y<limits.minY||savedPos.y>limits.maxY||b.x<0||b.x+b.w>WW||b.y<WT||b.y+b.h>WB)return 'Fuera del terreno';
+  if(boxesOverlap(b,{x:player.x-6,y:player.y-6,w:20,h:22},3))return 'Apártate del recuadro antes de colocar';
+  if(roadSegments.some(r=>boxesOverlap(b,{x:r.x,y:r.y,w:32,h:32},1))||(b.y<298&&b.y+b.h>250)||(b.x<478&&b.x+b.w>430&&b.y<JUNGLE.y1&&b.y+b.h>WT))return 'No se puede colocar sobre un camino';
+  if(fences.some(f=>boxesOverlap(b,fenceObjectBounds(f),2)))return 'Hay una valla u otra construcción ahí';
+  if(trees.some(t=>{let q=t[2]>=5?{x:t[0]-3,y:t[1]-14,w:64,h:70}:t[2]===4?{x:t[0]-4,y:t[1]-8,w:52,h:66}:t[2]===3?{x:t[0]-4,y:t[1]-5,w:32,h:42}:{x:t[0]-5,y:t[1]-20,w:44,h:54};return boxesOverlap(b,q,3);}))return 'Hay un árbol ahí';
+  if(crops.some(c=>boxesOverlap(b,{x:c.x-6,y:c.y+2,w:22,h:18},2))||berries.some(q=>boxesOverlap(b,{x:q.x-8,y:q.y-12,w:28,h:28},2))||dugPatches.some(q=>boxesOverlap(b,{x:q.x,y:q.y,w:32,h:32},1)))return 'Hay un cultivo o un hoyo ahí';
+  if(BUSHES.some(q=>boxesOverlap(b,{x:q.x-16,y:q.y-10,w:32,h:24},2))||WILDFLOWER_PATCHES.some(q=>q.x>=b.x-3&&q.x<=b.x+b.w+3&&q.y>=b.y-3&&q.y<=b.y+b.h+3)||DESERT_PLANTS.some(q=>boxesOverlap(b,{x:q.x-5,y:q.y-5,w:30,h:34},1))||JUNGLE_PLANTS.some(q=>q.x>=b.x-8&&q.x<=b.x+b.w+8&&q.y>=b.y-8&&q.y<=b.y+b.h+8))return 'Hay plantas o arbustos ahí';
+  if(lootDrops.some(q=>boxesOverlap(b,{x:q.x-5,y:q.y-5,w:20,h:20},1)))return 'Retira primero los objetos del suelo';
+  if(animals.some(q=>boxesOverlap(b,{x:q.x,y:q.y,w:18,h:18},1))||wild.some(q=>boxesOverlap(b,{x:q.x-8,y:q.y-8,w:24,h:24},1))||donkeys.some(q=>boxesOverlap(b,{x:q.x-4,y:q.y-6,w:30,h:30},1))||enemies.some(q=>boxesOverlap(b,{x:q.x-4,y:q.y-6,w:24,h:26},1)))return 'Espera a que se aparten los animales o enemigos';
+  if(craftTablePos&&boxesOverlap(b,fenceObjectBounds({...craftTablePos,type:'table'}),3)||woodCutterPos&&boxesOverlap(b,fenceObjectBounds({...woodCutterPos,type:'woodCutter'}),3)||placedLamps.some(q=>boxesOverlap(b,fenceObjectBounds({...q,type:'lamp'}),3))||solarGeneratorPos&&boxesOverlap(b,{x:solarGeneratorPos.x,y:solarGeneratorPos.y,w:36,h:28},3)||dogHousePos&&boxesOverlap(b,{x:dogHousePos.x,y:dogHousePos.y,w:32,h:28},3)||robertoHousePos&&boxesOverlap(b,{x:robertoHousePos.x,y:robertoHousePos.y,w:40,h:32},3)||farmerRobotPos&&boxesOverlap(b,{x:farmerRobotPos.x,y:farmerRobotPos.y,w:32,h:32},3))return 'Hay otra construcción u objeto ahí';
+  if(boxesOverlap(b,{x:580,y:36,w:60,h:56},2)||boxesOverlap(b,{x:streetLamp.x-10,y:streetLamp.y-10,w:36,h:42},3))return 'No se puede colocar sobre una estructura';
+  if(npcFarmer&&npcFarmer.homeBuilt&&npcFarmer.home&&boxesOverlap(b,{x:npcFarmer.home.x,y:npcFarmer.home.y,w:94,h:90},3))return 'Hay una casa ahí';
+  if(roberto.active&&boxesOverlap(b,{x:roberto.x-8,y:roberto.y-4,w:28,h:34},4)||sheila.active&&!sheila.arrived&&boxesOverlap(b,{x:sheila.x-8,y:sheila.y-4,w:28,h:28},4)||smallDogOwned&&boxesOverlap(b,{x:smallDog.x-6,y:smallDog.y-6,w:28,h:28},4))return 'Espera a que los personajes se aparten';
+  if(kind==='house'&&boxesOverlap(b,shopCollision,3)||kind==='shop'&&houseWalls.some(w=>boxesOverlap(b,{x:w.x1,y:w.y1,w:w.x2-w.x1,h:w.y2-w.y1},3)))return 'Deja espacio entre la casa y la tienda';
+  for(let y=b.y+4;y<b.y+b.h;y+=16)for(let x=b.x+4;x<b.x+b.w;x+=16){
+    if(inPond(x,y)||inRiver(x,y)||inSea(x,y)||inBeach(x,y)||insideMountainPolygon(x,y)||insideJunkyard(x,y)||junkyardWallPoint(x,y)||inCemetery(x,y,12)||onJaguarCauseway(x,y)||inJaguarTempleClearance(x,y,10))return 'Ese terreno está ocupado o no es transitable';
+    if(isBlocked(x-8,y-12,'player'))return 'Hay una construcción u obstáculo ahí';
+  }
+  return '';
+}
 function fenceSnapSlotClear(x,y,rot,type='fence'){
   let obj={x,y,rot,type},b=fenceObjectBounds(obj);
   if(b.x<0||b.x+b.w>WW||b.y<WT||b.y+b.h>WB)return false;
@@ -5477,12 +5596,13 @@ function fencePreviewPlacement(){
     if(!target){let p=fenceForwardPoint();return {x:p.x,y:p.y,type:'fence',valid:false,reason:'Acércate y apunta a una calle, valla, puerta, casa de perro o de Roberto, altar o mesa'};}
     return {x:target.x,y:target.y,type:target.type,open:!!target.open,rot:target.rot||0,targetIndex:target.index,targetKind:target.kind,valid:true,reason:''};
   }
-  let type=buildTool==='road'?'road':buildTool==='table'?'table':buildTool==='woodCutter'?'woodCutter':buildTool==='lamp'?'lamp':buildTool==='solarGenerator'?'solarGenerator':buildTool==='farmerRobot'?'farmerRobot':buildTool==='dogHouse'?'dogHouse':buildTool==='robertoHouse'?'robertoHouse':buildTool==='altar'?'altar':buildTool==='gate'?'gate':'fence',rot=buildRotation;
-  let p=type==='road'?roadForwardPosition():fenceForwardPoint(type==='gate'?48:32),gx=p.x,gy=p.y,reason='';
-  if(type!=='road'&&type!=='table'&&type!=='woodCutter'&&type!=='lamp'&&type!=='solarGenerator'&&type!=='farmerRobot'&&type!=='dogHouse'&&type!=='robertoHouse'&&type!=='altar'){let snap=autoSnapFence(gx,gy,rot,type);gx=snap.x;gy=snap.y;}
-  let obj=type==='road'?{x:gx,y:gy,type,w:32,h:32}:type==='table'?{x:gx,y:gy,type,w:28,h:20}:type==='woodCutter'?{x:gx,y:gy,type,w:32,h:24}:type==='lamp'?{x:gx,y:gy,type,w:16,h:34}:type==='solarGenerator'?{x:gx,y:gy,type,w:36,h:28}:type==='farmerRobot'?{x:gx,y:gy,type,w:32,h:32}:type==='dogHouse'?{x:gx,y:gy,type,w:32,h:28}:type==='robertoHouse'?{x:gx,y:gy,type,w:40,h:32}:type==='altar'?{x:gx,y:gy,type,w:32,h:30}:{x:gx,y:gy,type,rot};
-  let b=fenceObjectBounds(obj),cx=b.x+b.w/2,cy=b.y+b.h/2;
-  if(type==='road'){reason=roadPlacementReason(b);}
+  let type=buildTool==='moveHouse'?'moveHouse':buildTool==='moveShop'?'moveShop':buildTool==='road'?'road':buildTool==='table'?'table':buildTool==='woodCutter'?'woodCutter':buildTool==='lamp'?'lamp':buildTool==='solarGenerator'?'solarGenerator':buildTool==='farmerRobot'?'farmerRobot':buildTool==='dogHouse'?'dogHouse':buildTool==='robertoHouse'?'robertoHouse':buildTool==='altar'?'altar':buildTool==='gate'?'gate':'fence',rot=buildRotation;
+  let distance=type==='moveHouse'?112:type==='moveShop'?76:type==='gate'?48:32,p=type==='road'?roadForwardPosition():fenceForwardPoint(distance),gx=p.x,gy=p.y,reason='';
+  if(type!=='road'&&type!=='table'&&type!=='woodCutter'&&type!=='lamp'&&type!=='solarGenerator'&&type!=='farmerRobot'&&type!=='dogHouse'&&type!=='robertoHouse'&&type!=='moveHouse'&&type!=='moveShop'&&type!=='altar'){let snap=autoSnapFence(gx,gy,rot,type);gx=snap.x;gy=snap.y;}
+  let obj=type==='moveHouse'?{x:gx-2,y:gy-5,type,w:92,h:91}:type==='moveShop'?{x:gx-6,y:gy-12,type,w:60,h:62}:type==='road'?{x:gx,y:gy,type,w:32,h:32}:type==='table'?{x:gx,y:gy,type,w:28,h:20}:type==='woodCutter'?{x:gx,y:gy,type,w:32,h:24}:type==='lamp'?{x:gx,y:gy,type,w:16,h:34}:type==='solarGenerator'?{x:gx,y:gy,type,w:36,h:28}:type==='farmerRobot'?{x:gx,y:gy,type,w:32,h:32}:type==='dogHouse'?{x:gx,y:gy,type,w:32,h:28}:type==='robertoHouse'?{x:gx,y:gy,type,w:40,h:32}:type==='altar'?{x:gx,y:gy,type,w:32,h:30}:{x:gx,y:gy,type,rot};
+  let b=type==='moveHouse'?{x:gx-2,y:gy-5,w:92,h:91}:type==='moveShop'?{x:gx-6,y:gy-12,w:60,h:62}:fenceObjectBounds(obj),cx=b.x+b.w/2,cy=b.y+b.h/2;
+  if(type==='moveHouse'||type==='moveShop'){reason=relocationPlacementReason(b,type==='moveHouse'?'house':'shop');}
+  else if(type==='road'){reason=roadPlacementReason(b);}
   else if(type==='altar'){
     if(fences.some(f=>f.type==='altar'))reason='Ya colocaste un altar';
     else if(wood<10)reason='Necesitas 10 de madera para el altar';
@@ -5548,10 +5668,10 @@ function fencePreviewPlacement(){
 function drawFencePreview(){
   let p=fencePreviewPlacement(),x=p.x-cam.x,y=p.y-cam.y;
   let b=p.bounds||fenceObjectBounds({x:p.x,y:p.y,type:p.type,rot:p.rot||0});
-  g.save();g.globalAlpha=0.58;if(p.type==='road')drawRoadSegmentArt(x,y);else if(p.type==='altar')drawAltar(x,y);else if(p.type==='table')drawCraftTable(x,y);else if(p.type==='woodCutter')drawWoodCutter(x,y);else if(p.type==='lamp')drawSingleStreetLamp({x:p.x,y:p.y,radius:120});else if(p.type==='solarGenerator')drawSolarGenerator({x:p.x,y:p.y,w:36,h:28},true);else if(p.type==='dogHouse')drawDogHouse({x:p.x,y:p.y,w:32,h:28},true);else if(p.type==='robertoHouse')drawRobertoHouse({x:p.x,y:p.y,w:40,h:32},true);else if(p.type==='farmerRobot')drawFarmerRobotSprite(x,y,'idle',performance.now()/160);else drawFence(x,y,p.type,p.open,p.rot||0);g.restore();
+  g.save();g.globalAlpha=0.58;if(p.type==='moveHouse')drawFarmhouse(x,y);else if(p.type==='moveShop')drawShopStall(x,y);else if(p.type==='road')drawRoadSegmentArt(x,y);else if(p.type==='altar')drawAltar(x,y);else if(p.type==='table')drawCraftTable(x,y);else if(p.type==='woodCutter')drawWoodCutter(x,y);else if(p.type==='lamp')drawSingleStreetLamp({x:p.x,y:p.y,radius:120});else if(p.type==='solarGenerator')drawSolarGenerator({x:p.x,y:p.y,w:36,h:28},true);else if(p.type==='dogHouse')drawDogHouse({x:p.x,y:p.y,w:32,h:28},true);else if(p.type==='robertoHouse')drawRobertoHouse({x:p.x,y:p.y,w:40,h:32},true);else if(p.type==='farmerRobot')drawFarmerRobotSprite(x,y,'idle',performance.now()/160);else drawFence(x,y,p.type,p.open,p.rot||0);g.restore();
   g.save();g.strokeStyle=buildTool==='destroy'?'#ff394d':p.valid?'#5dff7a':'#ff4657';g.lineWidth=2;g.setLineDash([3,2]);g.strokeRect(Math.round(b.x-cam.x-2),Math.round(b.y-cam.y-2),b.w+4,b.h+4);g.setLineDash([]);g.restore();
-  let orient=p.rot?'vertical':'horizontal',names={road:'calle',table:'mesa de crafteo',woodCutter:'mesa de corte',lamp:'farol de calle',solarGenerator:'generador solar',dogHouse:'casa de perro',robertoHouse:'casa de Roberto',altar:'altar de ofrenda',farmerRobot:'robot granjero',gate:'puerta',fence:'valla'};
-  $('buildInfo').textContent=buildTool==='destroy'?(p.valid?'A: destruir '+(p.type==='road'?'calle':p.type==='table'?'mesa':p.type==='woodCutter'?'mesa de corte':p.type==='lamp'?'farol':p.type==='solarGenerator'?'generador solar':p.type==='farmerRobot'?'robot granjero':p.type==='dogHouse'?'casa de perro':p.type==='robertoHouse'?'casa de Roberto':'valla/puerta'):'Destruir: '+p.reason):'Recuadro '+(p.valid?'verde:':'rojo:')+(p.valid?' A para poner '+(names[p.type]||'valla')+(p.type==='road'?' · 50 piedras':(p.type==='fence'||p.type==='gate'?' · '+orient:'')):' '+p.reason);
+  let orient=p.rot?'vertical':'horizontal',names={road:'calle',table:'mesa de crafteo',woodCutter:'mesa de corte',lamp:'farol de calle',solarGenerator:'generador solar',dogHouse:'casa de perro',robertoHouse:'casa de Roberto',moveHouse:'casa',moveShop:'tienda',altar:'altar de ofrenda',farmerRobot:'robot granjero',gate:'puerta',fence:'valla'};
+  $('buildInfo').textContent=buildTool==='destroy'?(p.valid?'A: destruir '+(p.type==='road'?'calle':p.type==='table'?'mesa':p.type==='woodCutter'?'mesa de corte':p.type==='lamp'?'farol':p.type==='solarGenerator'?'generador solar':p.type==='farmerRobot'?'robot granjero':p.type==='dogHouse'?'casa de perro':p.type==='robertoHouse'?'casa de Roberto':'valla/puerta'):'Destruir: '+p.reason):'Recuadro '+(p.valid?'verde:':'rojo:')+(p.valid?' A para '+(buildTool==='moveHouse'?'reubicar la casa':buildTool==='moveShop'?'reubicar la tienda':'poner '+(names[p.type]||'valla'))+(p.type==='road'?' · 50 piedras':(p.type==='fence'||p.type==='gate'?' · '+orient:'')):' '+p.reason);
 }
 function buildFence(){
   let p=fencePreviewPlacement();
@@ -5566,6 +5686,12 @@ function buildFence(){
     if(p.targetKind==='farmerRobot'){farmerRobotPos=null;farmerRobotNextPlankAt=0;farmerRobotAction='idle';farmerRobotNextWorkAt=0;ui();save();playAxeHit();msg('Robot granjero retirado; puedes volver a colocarlo desde Construir.');return;}
     if(p.targetKind==='road'){roadSegments.splice(p.targetIndex,1);save();playAxeHit();msg('Tramo de calle retirado.');return;}
     let removed=fences.splice(p.targetIndex,1)[0];save();playAxeHit();msg(removed.type==='altar'?'Altar retirado.':removed.type==='gate'?'Puerta destruida.':'Valla destruida.');return;
+  }
+  if(buildTool==='moveHouse'){
+    relocateFarmhouse(p.x,p.y);buildMode=false;plantMode=!!selectedCrop;roadPlacementLocked=false;roadLockAnchor=null;roadLockNextPosition=null;$('buildBtn').textContent='🔨 Construcción';$('buildBtn').style.background='#8b5a2b';$('buildInfo').textContent='';$('rotateFenceBtn').style.display='none';$('lockRoadBtn').style.display='none';ui();playPlant();msg('¡Casa reubicada! Su puerta y salida se actualizaron.');return;
+  }
+  if(buildTool==='moveShop'){
+    relocateShopStall(p.x,p.y);buildMode=false;plantMode=!!selectedCrop;roadPlacementLocked=false;roadLockAnchor=null;roadLockNextPosition=null;$('buildBtn').textContent='🔨 Construcción';$('buildBtn').style.background='#8b5a2b';$('buildInfo').textContent='';$('rotateFenceBtn').style.display='none';$('lockRoadBtn').style.display='none';ui();playPlant();msg('¡Tienda reubicada! Acércate a su nueva posición para comprar.');return;
   }
   if(buildTool==='road'){
     if(stone<50){msg('Necesitas 50 de piedra para construir un tramo de calle.');return;}
@@ -5878,7 +6004,7 @@ function drawZombieChickenWorldEffects(){
   for(const p of zombieEggProjectiles){let x=p.x-cam.x,y=p.y-cam.y;if(x<-15||x>W+15||y<-15||y>H+15)continue;ellipse(x,y+5,6,2,'#00000066');RB(x-4,y-5,8,9,'#e7ddcf');R(x-2,y-4,4,2,'#fff3df');R(x-3,y-1,2,2,'#a71f2d');R(x+1,y+1,3,1,'#e13a42');R(x+2,y-7,2,3,'#ff513f');}
   for(const e of zombieEggExplosions){let x=e.x-cam.x,y=e.y-cam.y,p=1-e.life/e.maxLife,r=8+p*29,alpha=Math.max(0,e.life/e.maxLife),grad=g.createRadialGradient(x,y,2,x,y,r);grad.addColorStop(0,'rgba(255,244,177,'+(0.85*alpha)+')');grad.addColorStop(0.34,'rgba(255,103,36,'+(0.65*alpha)+')');grad.addColorStop(1,'rgba(210,10,35,0)');g.fillStyle=grad;g.fillRect(x-r,y-r,r*2,r*2);g.save();g.globalAlpha=alpha;for(let k=0;k<8;k++){let ang=k*Math.PI/4,rr=r*(0.55+0.08*(k%3));R(Math.round(x+Math.cos(ang)*rr),Math.round(y+Math.sin(ang)*rr),3,3,k%2?'#ffdb67':'#ff4b34');}g.restore();}
 }
-function nearShop(){return Math.hypot(player.x-320,player.y-244)<55}
+function nearShop(){return Math.hypot(player.x-(shopStallPos.x+24),player.y-(shopStallPos.y+24))<55}
 function nearCraftTable(){return !!craftTablePos&&Math.hypot(player.x-(craftTablePos.x+14),player.y-(craftTablePos.y+10))<38}
 function craftShovel(){
   if(!nearCraftTable()){msg('Acércate a tu mesa de crafteo.');return;}
@@ -6201,10 +6327,10 @@ function act(){
   if(!inHouse&&ei>=0&&(equippedWeapon==='sword'||equippedWeapon==='machete')){
     let e=enemies[ei];
     if(Math.hypot(player.x-e.x,player.y-e.y)<36){
-      e.hp-=50;swordAnim=18;playSwordHit();
+      let meleeDamage=e.type==='skeleton'?(equippedWeapon==='machete'&&macheteSockets.some(Boolean)?25:3):50;e.hp-=meleeDamage;swordAnim=18;playSwordHit();
       let broke=equippedWeapon==='sword'?wearWeapon('sword',5):false;
-      if(e.hp<=0){enemies.splice(ei,1);coins+=5+Math.floor(Math.random()*5);dropForKilledEnemy(e);msg(e.type==='giantFrog'?'¡Rana gigante derrotada! Dejó un diamante luminoso en el suelo. +🪙 · +10 XP':'¡Enemigo derrotado! +🪙 y dejó su objeto en el suelo. +10 XP');}
-      else{msg('¡Golpe! Enemigo '+e.hp+'% vida');}
+      if(e.hp<=0){enemies.splice(ei,1);coins+=5+Math.floor(Math.random()*5);dropForKilledEnemy(e);msg(e.type==='giantFrog'?'¡Rana gigante derrotada! Dejó un diamante luminoso en el suelo. +🪙 · +10 XP':e.type==='skeleton'?'¡Derrotaste al esqueleto! Dejó 2 huesos. +🪙 · +10 XP':'¡Derrotaste '+enemyA(e)+'! +🪙 y dejó su objeto en el suelo. +10 XP');}
+      else{msg('¡Golpe a '+enemyName(e)+'! '+e.hp+'/'+(e.maxHp||100)+' HP');}
       ui();if(broke)msg('¡Tu arma se ha roto!');if(e.hp<=0)awardXP(10);return;
     }
   }
@@ -6626,23 +6752,23 @@ function selectBuildTool(tool){
   if(tool==='robertoHouse'&&(!robertoHouseOwned||robertoHousePos)){msg(robertoHousePos?'Ya instalaste la casa de Roberto.':'Compra la casa de Roberto en el puesto de Sheila primero.');return;}
   if(tool==='altar'&&(fences.some(f=>f.type==='altar')||wood<10)){msg(fences.some(f=>f.type==='altar')?'Ya colocaste un altar.':'Necesitas 10 de madera para construir el altar.');return;}
   if(tool==='road'&&stone<50){msg('Necesitas 50 de piedra para construir un tramo de calle.');return;}
-  if(tool!=='road'&&tool!=='table'&&tool!=='woodCutter'&&tool!=='lamp'&&tool!=='solarGenerator'&&tool!=='farmerRobot'&&tool!=='dogHouse'&&tool!=='robertoHouse'&&!hasHammer&&!(tool==='destroy'&&(hasCraftTable||hasWoodCutter||placedLamps.length>0||!!solarGeneratorPos||!!farmerRobotPos||!!dogHousePos||!!robertoHousePos))){$('buildMenu').style.display='none';msg('Necesitas comprar martillo.');return;}
+  if(tool!=='road'&&tool!=='table'&&tool!=='woodCutter'&&tool!=='lamp'&&tool!=='solarGenerator'&&tool!=='farmerRobot'&&tool!=='dogHouse'&&tool!=='robertoHouse'&&tool!=='moveHouse'&&tool!=='moveShop'&&!hasHammer&&!(tool==='destroy'&&(hasCraftTable||hasWoodCutter||placedLamps.length>0||!!solarGeneratorPos||!!farmerRobotPos||!!dogHousePos||!!robertoHousePos))){$('buildMenu').style.display='none';msg('Necesitas comprar martillo.');return;}
   buildTool=tool;buildMode=true;plantMode=false;cropPlantChain=null;roadPlacementLocked=false;roadLockAnchor=null;roadLockNextPosition=null;$('buildMenu').style.display='none';
-  let labels={fence:'🪵 Valla',gate:'🚪 Puerta',road:'🪨 Calle',destroy:'🧹 Destruir',table:'🛠 Mesa',woodCutter:'🪚 Sierra',lamp:'💡 Farol',solarGenerator:'☀️ Solar',farmerRobot:'🤖 Robot',dogHouse:'🐕 Casa perro',robertoHouse:'🏠 Casa Roberto',altar:'🕯️ Altar'};
-  $('buildBtn').style.background=tool==='destroy'?'#b54a39':tool==='gate'?'#397eb4':tool==='road'?'#8a6c4d':tool==='table'||tool==='woodCutter'||tool==='altar'||tool==='dogHouse'||tool==='robertoHouse'?'#8b6a37':tool==='lamp'?'#b8862d':tool==='solarGenerator'?'#3b7b91':tool==='farmerRobot'?'#5e7c55':'#2a7a2a';
+  let labels={fence:'🪵 Valla',gate:'🚪 Puerta',road:'🪨 Calle',destroy:'🧹 Destruir',table:'🛠 Mesa',woodCutter:'🪚 Sierra',lamp:'💡 Farol',solarGenerator:'☀️ Solar',farmerRobot:'🤖 Robot',dogHouse:'🐕 Casa perro',robertoHouse:'🏠 Casa Roberto',moveHouse:'↔ Mover casa',moveShop:'↔ Mover tienda',altar:'🕯️ Altar'};
+  $('buildBtn').style.background=tool==='destroy'?'#b54a39':tool==='gate'?'#397eb4':tool==='road'?'#8a6c4d':tool==='table'||tool==='woodCutter'||tool==='altar'||tool==='dogHouse'||tool==='robertoHouse'||tool==='moveHouse'?'#8b6a37':tool==='moveShop'?'#b5793d':tool==='lamp'?'#b8862d':tool==='solarGenerator'?'#3b7b91':tool==='farmerRobot'?'#5e7c55':'#2a7a2a';
   $('buildBtn').textContent=labels[tool];
   $('rotateFenceBtn').style.display=(tool==='fence'||tool==='gate')?'block':'none';
   $('lockRoadBtn').style.display=tool==='road'?'block':'none';$('lockRoadBtn').textContent='📌 Fijar continuidad: No';$('lockRoadBtn').style.background='#7a633d';
   $('rotateFenceBtn').textContent='🔄 Girar valla ('+(buildRotation?'V':'H')+')';$('rotateFenceBtn').title=buildRotation?'Orientación vertical':'Orientación horizontal';
   $('buildInfo').textContent='Construcción: mira hacia el lugar y pulsa A.';
-  msg(tool==='destroy'?'Modo destruir: apunta a una calle, valla, puerta, casa de perro o de Roberto, mesa, farol, generador o robot y pulsa A.':tool==='road'?'Modo calle: cerca de una calle se acopla automáticamente. Fija continuidad para encadenar tramos; cuesta 50 piedras cada uno.':tool==='gate'?'Modo puerta: recuadro adelante; pulsa A para colocar.':tool==='table'?'Modo mesa: coloca el recuadro verde en un espacio libre y pulsa A.':tool==='woodCutter'?'Modo mesa de corte: usa el recuadro verde y pulsa A.':tool==='lamp'?'Modo farol: coloca el recuadro verde sobre el camino y pulsa A.':tool==='solarGenerator'?'Modo generador solar: coloca el recuadro en un lugar libre y pulsa A.':tool==='farmerRobot'?'Modo robot: colócalo junto a tus cultivos; cuesta 1 tabla y pulsa A.':tool==='dogHouse'?'Modo casa de perro: coloca su recuadro y pulsa A.':tool==='robertoHouse'?'Modo casa de Roberto: coloca su recuadro y pulsa A.':tool==='altar'?'Modo altar: coloca el recuadro sobre el río; cuesta 10 de madera.':'Modo valla: recuadro adelante; pulsa A para colocar.');
+  msg(tool==='destroy'?'Modo destruir: apunta a una calle, valla, puerta, casa de perro o de Roberto, mesa, farol, generador o robot y pulsa A.':tool==='moveHouse'?'Modo mover casa: coloca la vista previa en un espacio libre y pulsa A.':tool==='moveShop'?'Modo mover tienda: coloca la vista previa en un espacio libre y pulsa A.':tool==='road'?'Modo calle: cerca de una calle se acopla automáticamente. Fija continuidad para encadenar tramos; cuesta 50 piedras cada uno.':tool==='gate'?'Modo puerta: recuadro adelante; pulsa A para colocar.':tool==='table'?'Modo mesa: coloca el recuadro verde en un espacio libre y pulsa A.':tool==='woodCutter'?'Modo mesa de corte: usa el recuadro verde y pulsa A.':tool==='lamp'?'Modo farol: coloca el recuadro verde sobre el camino y pulsa A.':tool==='solarGenerator'?'Modo generador solar: coloca el recuadro en un lugar libre y pulsa A.':tool==='farmerRobot'?'Modo robot: colócalo junto a tus cultivos; cuesta 1 tabla y pulsa A.':tool==='dogHouse'?'Modo casa de perro: coloca su recuadro y pulsa A.':tool==='robertoHouse'?'Modo casa de Roberto: coloca su recuadro y pulsa A.':tool==='altar'?'Modo altar: coloca el recuadro sobre el río; cuesta 10 de madera.':'Modo valla: recuadro adelante; pulsa A para colocar.');
 }
 $('buildBtn').onclick=()=>{
   if(inBotHouse){msg('No puedes construir dentro de la casa del granjero.');return;}
   if(inMine){msg('No puedes construir dentro de la mina.');return;}
   if(inHouse){msg('Sal de casa para construir.');return;}
   if(buildMode){buildMode=false;plantMode=!!selectedCrop;roadPlacementLocked=false;roadLockAnchor=null;roadLockNextPosition=null;$('buildBtn').textContent='🔨 Construcción';$('buildBtn').style.background='#8b5a2b';$('buildInfo').textContent='';$('rotateFenceBtn').style.display='none';$('lockRoadBtn').style.display='none';msg(plantMode?'Modo de siembra reanudado. Pulsa A para plantar.':'Modo construcción desactivado.');return;}
-  if(!hasHammer&&!hasCraftTable&&!hasWoodCutter&&lampInventory<1&&placedLamps.length===0&&!hasSolarGenerator&&!farmerRobotOwned&&!dogHouseOwned&&!robertoHouseOwned&&stone<50){msg('Compra un martillo o reúne 50 piedras para abrir Construcción.');$('shop').style.display='block';return;}
+  // The menu must remain available without a hammer so the player can move the farmhouse or shop; each other tool checks its own prerequisites.
   $('chooseTable').disabled=!hasCraftTable||!!craftTablePos;
   $('chooseWoodCutter').disabled=!hasWoodCutter||!!woodCutterPos;
   let lampOption=$('chooseLamp');if(lampOption){let lampLimitReached=placedLamps.length>=MAX_LAMPS_WITHOUT_SOLAR&&!solarGeneratorPos;lampOption.disabled=lampInventory<1||lampLimitReached;lampOption.textContent=lampLimitReached?'💡 Límite 5 · instala solar':'💡 Poner farol ('+lampInventory+')';lampOption.title=lampLimitReached?'Instala el generador solar para colocar más de 5 faroles':'';}
@@ -6651,6 +6777,7 @@ $('buildBtn').onclick=()=>{
   $('chooseDogHouse').disabled=!dogHouseOwned||!!dogHousePos;$('chooseDogHouse').textContent=dogHousePos?'🐕 Casa instalada':dogHouseOwned?'🐕 Colocar casa de perro':'🐕 Casa de perro (Sheila)';
   $('chooseRobertoHouse').disabled=!robertoHouseOwned||!!robertoHousePos;$('chooseRobertoHouse').textContent=robertoHousePos?'🏠 Casa instalada':robertoHouseOwned?'🏠 Colocar casa de Roberto':'🏠 Casa de Roberto (Sheila)';
   $('chooseAltar').disabled=fences.some(f=>f.type==='altar')||wood<10;
+  $('chooseMoveHouse').disabled=false;$('chooseMoveShop').disabled=false;
   $('buildMenu').style.display='block';
 };
 $('chooseFence').onclick=()=>selectBuildTool('fence');
@@ -6660,7 +6787,7 @@ $('chooseTable').onclick=()=>selectBuildTool('table');
 $('chooseWoodCutter').onclick=()=>selectBuildTool('woodCutter');
 $('chooseLamp').onclick=()=>selectBuildTool('lamp');
 $('chooseSolarGenerator').onclick=()=>selectBuildTool('solarGenerator');
-$('chooseFarmerRobot').onclick=()=>selectBuildTool('farmerRobot');$('chooseDogHouse').onclick=()=>selectBuildTool('dogHouse');$('chooseRobertoHouse').onclick=()=>selectBuildTool('robertoHouse');
+$('chooseFarmerRobot').onclick=()=>selectBuildTool('farmerRobot');$('chooseDogHouse').onclick=()=>selectBuildTool('dogHouse');$('chooseRobertoHouse').onclick=()=>selectBuildTool('robertoHouse');$('chooseMoveHouse').onclick=()=>selectBuildTool('moveHouse');$('chooseMoveShop').onclick=()=>selectBuildTool('moveShop');
 $('chooseAltar').onclick=()=>selectBuildTool('altar');
 $('chooseDestroy').onclick=()=>selectBuildTool('destroy');
 $('toggleDigContinuityBtn').onclick=()=>{if(!hasShovel||equippedWeapon!=='shovel'){msg('Equipa la pala primero.');refreshDigControls();return;}digContinuity=!digContinuity;digContinuityAnchor=null;refreshDigControls();msg(digContinuity?'Continuidad de hoyos activada: el siguiente se abrirá junto al anterior.':'Continuidad de hoyos desactivada.');};
@@ -7099,7 +7226,7 @@ if(inBotHouse){cam.x=cam.y=0;drawBotHouseInterior();character({drawX:botHousePla
     g.fillStyle='#000';g.fillRect(dx-22,dy-10,44,14);g.fillStyle='#ffe28a';g.font='12px VT323, monospace';g.fillText('ENTRAR [A]',dx-20,dy);
   }
   if(nearShop()){
-    let sx=320-cam.x,sy=207-cam.y;g.fillStyle='#000';g.fillRect(sx-27,sy-11,54,14);g.fillStyle='#ffe28a';g.font='11px VT323, monospace';g.fillText('TIENDA [A]',sx-24,sy);
+    let sx=shopStallPos.x+24-cam.x,sy=shopStallPos.y-13-cam.y;g.fillStyle='#000';g.fillRect(sx-27,sy-11,54,14);g.fillStyle='#ffe28a';g.font='11px VT323, monospace';g.fillText('TIENDA [A]',sx-24,sy);
   }
   // Filtro de ciclo día/noche: tinte global + sombras dinámicas
   let isNight = dayTime<0.28 || dayTime>0.82;
@@ -7255,7 +7382,12 @@ function refreshProfileCard(){const nick=(HVD.getName()||'Granjero').trim()||'Gr
 function setProfileMenu(open){profileMenu.style.display=open?'flex':'none';profileMenu.setAttribute('aria-hidden',open?'false':'true');profileToggle.setAttribute('aria-expanded',open?'true':'false');}
 function closeAccountsPanel(){accountsPanel.style.display='none';accountsPanel.setAttribute('aria-hidden','true');}
 function openAccountsPanel(){setProfileMenu(false);accountsPanel.style.display='flex';accountsPanel.setAttribute('aria-hidden','false');}
+const globalRankingModal=$('globalRankingModal'),globalRankingRows=$('globalRankingRows'),globalRankingStatus=$('globalRankingStatus');
+function closeGlobalRanking(){if(!globalRankingModal)return;globalRankingModal.style.display='none';globalRankingModal.setAttribute('aria-hidden','true');}
+function renderGlobalRanking(rows){globalRankingRows.replaceChildren();if(!rows.length){const empty=document.createElement('div');empty.className='hvNote';empty.textContent='Todavía no hay récords públicos. Inicia sesión y activa tu participación para aparecer.';globalRankingRows.appendChild(empty);return;}rows.slice(0,10).forEach((row,index)=>{const item=document.createElement('div');item.className='hvGlobalRankRow';const position=document.createElement('span');position.className='hvGlobalRankPosition';position.textContent=String(row.rank_position||index+1);const avatar=window.HVLeaderboard?window.HVLeaderboard.renderAvatar(row.avatar_seed):document.createElement('span');if(!window.HVLeaderboard)avatar.textContent='👤';const nickname=document.createElement('strong');nickname.className='hvGlobalRankName';nickname.textContent=String(row.nickname||'Granjero').slice(0,24);const score=document.createElement('span');score.className='hvGlobalRankDay';score.textContent='Día '+String(Math.max(1,Math.floor(Number(row.best_day)||1)));item.append(position,avatar,nickname,score);globalRankingRows.appendChild(item);});}
+async function openGlobalRanking(){globalRankingModal.style.display='flex';globalRankingModal.setAttribute('aria-hidden','false');globalRankingStatus.textContent='Cargando top 10…';globalRankingRows.replaceChildren();try{if(!window.HVLeaderboard)throw new Error('offline');const rows=await window.HVLeaderboard.loadTop10();renderGlobalRanking(rows);globalRankingStatus.textContent=rows.length?'Récords mundiales · actualizado ahora':'El ranking aún no tiene jugadores participantes.';}catch(e){globalRankingStatus.textContent='No se pudo cargar el ranking. Comprueba la conexión o que el servidor ya esté actualizado.';}}
 nameIn.value=HVD.getName();refreshProfileCard();nameIn.oninput=()=>{HVD.setName(nameIn.value);refreshProfileCard();};
+bindMobileTap($('openGlobalLeaderboard'),openGlobalRanking);bindMobileTap($('closeGlobalRanking'),closeGlobalRanking);bindMobileTap($('globalRankingAccount'),()=>{closeGlobalRanking();if(window.HVLeaderboard)window.HVLeaderboard.openCloudAccount();else openAccountsPanel();});globalRankingModal.addEventListener('click',e=>{if(e.target===globalRankingModal)closeGlobalRanking();});
 bindMobileTap(profileToggle,()=>setProfileMenu(profileMenu.style.display!=='flex'));
 bindMobileTap($('profileAccountsBtn'),openAccountsPanel);
 bindMobileTap($('closeAccounts'),closeAccountsPanel);
@@ -7567,11 +7699,11 @@ startLobby();
   // Keep public signup disabled until an approved transactional email sender is configured.
   const PUBLIC_SIGNUP_ENABLED=false;
   const $=id=>document.getElementById(id);
-  const els={cloud:$('hvCloudArea'),friends:$('hvFriendsArea'),authState:$('hvAuthState'),authStatus:$('hvAuthStatus'),authForm:$('hvAuthForm'),signedIn:$('hvSignedInArea'),ownId:$('hvOwnPublicId'),cloudNickname:$('hvCloudNickname'),cloudProfileStatus:$('hvCloudProfileStatus'),discoverable:$('hvDiscoverable'),accountEmail:$('hvAccountEmail'),updatesOptIn:$('hvUpdatesOptIn'),giftsOptIn:$('hvGiftsOptIn'),notificationStatus:$('hvNotificationStatus'),socialStatus:$('hvSocialStatus'),search:$('hvSearchInput'),results:$('hvSearchResults'),recent:$('hvRecentBtn'),incoming:$('hvIncomingList'),outgoing:$('hvOutgoingList'),friendList:$('hvFriendsList'),modal:$('hvProfileModal')};
-  let client=null,clientPromise=null,currentUser=null,ownProfile=null,viewing=null,authListener=null;
+  const els={cloud:$('hvCloudArea'),friends:$('hvFriendsArea'),authState:$('hvAuthState'),authStatus:$('hvAuthStatus'),authForm:$('hvAuthForm'),signedIn:$('hvSignedInArea'),ownId:$('hvOwnPublicId'),cloudNickname:$('hvCloudNickname'),cloudProfileStatus:$('hvCloudProfileStatus'),discoverable:$('hvDiscoverable'),leaderboardOptIn:$('hvLeaderboardOptIn'),leaderboardPrefStatus:$('hvLeaderboardPrefStatus'),accountEmail:$('hvAccountEmail'),updatesOptIn:$('hvUpdatesOptIn'),giftsOptIn:$('hvGiftsOptIn'),notificationStatus:$('hvNotificationStatus'),socialStatus:$('hvSocialStatus'),search:$('hvSearchInput'),results:$('hvSearchResults'),recent:$('hvRecentBtn'),incoming:$('hvIncomingList'),outgoing:$('hvOutgoingList'),friendList:$('hvFriendsList'),modal:$('hvProfileModal')};
+  let client=null,clientPromise=null,currentUser=null,ownProfile=null,viewing=null,authListener=null,leaderboardOptIn=false,lastLeaderboardUserId='',lastLeaderboardDay=0,lastLeaderboardAttemptAt=0,leaderboardSubmitPromise=null;
   const avatarColors=[['#e9c988','#874e36','#426348','#ce8050'],['#dfb76e','#594536','#425c79','#aa4334'],['#f0d194','#312d2b','#805345','#739152'],['#d9a875','#6b4734','#725b8e','#c4a846'],['#f2cf8f','#48352c','#477c80','#9d6137'],['#dbb079','#332f35','#556b42','#ba5260'],['#efc887','#75482b','#536c91','#d07c3d'],['#e5ba81','#4c4239','#87644a','#598e73']];
   function setStatus(node,text){if(node)node.textContent=String(text||'');}
-  function errorText(err){const s=String(err&&((err.message)||(err.error_description))||'');if(/invalid login credentials/i.test(s))return 'No se pudo iniciar sesión. Revisa el correo y la contraseña.';if(/email not confirmed/i.test(s))return 'Confirma tu correo antes de iniciar sesión; el envío de confirmaciones aún requiere SMTP aprobado.';if(/already registered/i.test(s))return 'Ese correo ya tiene una cuenta. Intenta iniciar sesión.';if(/duplicate key|hv_profiles_nickname_key_uq|nickname_key/i.test(s))return 'Ese nickname ya está en uso. Elige otro.';if(/HV_NICKNAME|nickname_length/i.test(s))return 'El nickname debe tener de 3 a 12 caracteres.';if(/Failed to fetch|NetworkError|Load failed/i.test(s))return 'Sin conexión al servicio de cuentas. Comprueba tu conexión e inténtalo de nuevo.';return s||'Ocurrió un error. Inténtalo de nuevo.';}
+  function errorText(err){const s=String(err&&((err.message)||(err.error_description))||'');if(/invalid login credentials/i.test(s))return 'No se pudo iniciar sesión. Revisa el correo y la contraseña del juego.';if(/email not confirmed/i.test(s))return 'Confirma tu correo antes de iniciar sesión; el envío de confirmaciones requiere SMTP configurado.';if(/anonymous.*disabled|anonymous sign.?ins? (are )?disabled/i.test(s))return 'El acceso de invitado aún no está habilitado en el servidor.';if(/already registered/i.test(s))return 'Ese correo ya tiene una cuenta. Intenta iniciar sesión.';if(/duplicate key|hv_profiles_nickname_key_uq|nickname_key/i.test(s))return 'Ese nickname ya está en uso. Cámbialo en Perfil y vuelve a intentar.';if(/HV_NICKNAME|nickname_length/i.test(s))return 'El nickname debe tener de 3 a 12 caracteres.';if(/Failed to fetch|NetworkError|Load failed/i.test(s))return 'Sin conexión al servicio de cuentas. Comprueba tu conexión e inténtalo de nuevo.';return s||'Ocurrió un error. Inténtalo de nuevo.';}
   function setAuthStatus(text){setStatus(els.authStatus,text);}
   async function loadClient(){
     if(client)return client;
@@ -7610,6 +7742,11 @@ startLobby();
   }
   function rpcRows(data){if(Array.isArray(data))return data;if(data&&typeof data==='object')return [data];return [];}
   async function rpc(name,args){const c=await loadClient();const {data,error}=await c.rpc(name,args||{});if(error)throw error;return data;}
+  async function loadGlobalLeaderboard(){try{await initAuth();}catch(e){}return rpcRows(await rpc('hv_get_global_day_leaderboard'));}
+  async function submitDayRecord(value){let d=Math.floor(Number(value));if(!Number.isSafeInteger(d)||d<1||!currentUser||!leaderboardOptIn)return false;if(lastLeaderboardUserId!==currentUser.id){lastLeaderboardUserId=currentUser.id;lastLeaderboardDay=0;lastLeaderboardAttemptAt=0;}if(d<=lastLeaderboardDay)return true;if(leaderboardSubmitPromise)return leaderboardSubmitPromise;if(Date.now()-lastLeaderboardAttemptAt<30000)return false;lastLeaderboardAttemptAt=Date.now();leaderboardSubmitPromise=(async()=>{try{await rpc('hv_submit_day_record',{p_day:d});lastLeaderboardDay=d;return true;}finally{leaderboardSubmitPromise=null;}})();return leaderboardSubmitPromise;}
+  async function saveLeaderboardOptIn(){if(!currentUser){setStatus(els.leaderboardPrefStatus,'Inicia sesión para participar.');return;}const button=$('hvSaveLeaderboardOptIn');if(button)button.disabled=true;setStatus(els.leaderboardPrefStatus,'Guardando preferencia…');try{const enabled=!!els.leaderboardOptIn.checked;await rpc('hv_set_leaderboard_opt_in',{p_enabled:enabled});leaderboardOptIn=enabled;lastLeaderboardDay=0;lastLeaderboardUserId=currentUser.id;lastLeaderboardAttemptAt=0;setStatus(els.leaderboardPrefStatus,enabled?'Participas en el ranking. Tu récord se actualizará al guardar tu partida.':'Dejaste de participar; tu récord público fue retirado.');if(enabled&&Number.isSafeInteger(Number(window.__HVDCurrentDay)))await submitDayRecord(window.__HVDCurrentDay);}catch(e){setStatus(els.leaderboardPrefStatus,'No se pudo guardar la preferencia. Verifica que la actualización del ranking esté instalada.');els.leaderboardOptIn.checked=leaderboardOptIn;}finally{if(button)button.disabled=false;}}
+  function openCloudAccount(){const panel=$('accountsPanel');if(panel){panel.style.display='flex';panel.setAttribute('aria-hidden','false');switchTab('cloud');}}
+  window.HVLeaderboard={loadTop10:loadGlobalLeaderboard,submitDay:submitDayRecord,renderAvatar:seed=>renderAvatar(seed,'hvGlobalRankAvatar'),openCloudAccount};
   async function initAuth(){
     if(!els.authState)return;
     els.authState.textContent='Conectando…';
@@ -7620,16 +7757,18 @@ startLobby();
   }
   async function refreshAuthUI(){
     if(!els.authState)return;
-    if(!currentUser){ownProfile=null;els.authState.textContent='No has iniciado sesión. El registro público está temporalmente pausado.';els.authForm.classList.remove('hvInactive');els.signedIn.classList.add('hvInactive');els.friends.classList.add('hvInactive');els.accountEmail.textContent='—';els.updatesOptIn.checked=false;els.giftsOptIn.checked=false;return;}
-    els.authState.textContent='Sesión activa · correo privado';els.authForm.classList.add('hvInactive');els.signedIn.classList.remove('hvInactive');
+    if(!currentUser){ownProfile=null;leaderboardOptIn=false;lastLeaderboardUserId='';lastLeaderboardDay=0;els.authState.textContent='No has iniciado sesión. El registro público está temporalmente pausado.';els.authForm.classList.remove('hvInactive');els.signedIn.classList.add('hvInactive');els.friends.classList.add('hvInactive');els.accountEmail.textContent='—';els.updatesOptIn.checked=false;els.giftsOptIn.checked=false;if(els.leaderboardOptIn)els.leaderboardOptIn.checked=false;setStatus(els.leaderboardPrefStatus,'Inicia sesión y activa la participación opcional.');return;}
+    els.authState.textContent=currentUser.is_anonymous?'Sesión invitada activa':'Sesión activa · correo privado';els.authForm.classList.add('hvInactive');els.signedIn.classList.remove('hvInactive');
     try{
       const mine=rpcRows(await rpc('hv_get_my_profile'))[0];
       if(!mine){ownProfile=null;setAuthStatus('La cuenta no tiene perfil confirmado. Revisa la configuración de correo y vuelve a iniciar sesión.');els.signedIn.classList.add('hvInactive');els.friends.classList.add('hvInactive');return;}
       ownProfile=mine;els.ownId.textContent=String(mine.public_id);els.cloudNickname.value=mine.nickname||'';els.discoverable.checked=!!mine.discoverable;els.friends.classList.remove('hvInactive');
+      try{const ranking=rpcRows(await rpc('hv_get_leaderboard_opt_in'))[0];leaderboardOptIn=!!(ranking&&ranking.enabled);els.leaderboardOptIn.checked=leaderboardOptIn;setStatus(els.leaderboardPrefStatus,leaderboardOptIn?'Participas en el ranking mundial.':'Participación desactivada; solo se mostrarán quienes la acepten.');}catch(e){leaderboardOptIn=false;els.leaderboardOptIn.checked=false;setStatus(els.leaderboardPrefStatus,'El ranking se activa cuando se instale la actualización del servidor.');}
       const verified=!!(currentUser.email&&(currentUser.email_confirmed_at||currentUser.confirmed_at));
-      els.accountEmail.textContent=verified?currentUser.email:'No hay un correo verificado en esta sesión';
+      els.accountEmail.textContent=currentUser.is_anonymous?'Invitado · ligado a este navegador':verified?currentUser.email:'No hay un correo verificado en esta sesión';
       await loadNotificationPreferences();
-      setAuthStatus('Cuenta conectada. Tus mundos y tu foto local no se modifican.');
+      setAuthStatus(currentUser.is_anonymous?'Perfil invitado conectado. Si borras los datos del navegador, podrías perderlo.':'Cuenta conectada. Tus mundos y tu foto local no se modifican.');
+      if(leaderboardOptIn&&Number.isSafeInteger(Number(window.__HVDCurrentDay)))submitDayRecord(window.__HVDCurrentDay).catch(()=>{});
       if(!window.__hvSocialTouchTimer){rpc('hv_touch_profile').catch(()=>{});window.__hvSocialTouchTimer=setInterval(()=>{if(currentUser&&!document.hidden)rpc('hv_touch_profile').catch(()=>{});},10*60*1000);}
     }catch(e){setAuthStatus(errorText(e));els.friends.classList.add('hvInactive');}
   }
@@ -7746,7 +7885,8 @@ startLobby();
     try{const c=await loadClient();const {error}=await c.auth.signUp({email,password,options:{data:{nickname,discoverable:false},emailRedirectTo:location.href.split(/[?#]/)[0]}});if(error)throw error;setAuthStatus('Si el remitente de correo está habilitado, recibirás un enlace para confirmar. Se requiere confirmar el correo antes de iniciar sesión.');}
     catch(e){setAuthStatus(errorText(e));}
   }
-  async function signOut(){try{const c=await loadClient();const {error}=await c.auth.signOut();if(error)throw error;currentUser=null;ownProfile=null;await refreshAuthUI();setAuthStatus('Sesión cerrada.');}catch(e){setAuthStatus(errorText(e));}}
+  async function guestSignIn(){const button=$('hvGuestSignIn');if(button)button.disabled=true;setAuthStatus('Creando perfil invitado…');try{const c=await loadClient();const existing=await c.auth.getSession();if(existing.error)throw existing.error;if(existing.data&&existing.data.session&&existing.data.session.user){currentUser=existing.data.session.user;await refreshAuthUI();setAuthStatus('Ya hay una sesión activa en este navegador. Cierra esa sesión primero si quieres cambiar de perfil.');return;}let nickname=(document.getElementById('nameIn').value||'').trim().slice(0,12);if(nickname.length<3)nickname='Granjero'+Math.floor(1000+Math.random()*9000);const {data,error}=await c.auth.signInAnonymously({options:{data:{nickname,discoverable:false}}});if(error)throw error;currentUser=data&&data.user||null;if(!currentUser)throw new Error('No se pudo crear el perfil invitado.');HVD.setName(nickname);const nameInput=document.getElementById('nameIn');if(nameInput)nameInput.value=nickname;const profileName=document.getElementById('profileNickname');if(profileName)profileName.textContent=nickname;await refreshAuthUI();setAuthStatus('Perfil invitado listo. Tu nickname y récord quedan ligados a este navegador.');}catch(e){setAuthStatus(errorText(e));}finally{if(button)button.disabled=false;}}
+  async function signOut(){if(currentUser&&currentUser.is_anonymous&&!window.confirm('Si cierras esta sesión invitada, no podrás recuperarla desde otro navegador o dispositivo. ¿Quieres salir de todos modos?'))return;try{const c=await loadClient();const {error}=await c.auth.signOut();if(error)throw error;currentUser=null;ownProfile=null;leaderboardOptIn=false;await refreshAuthUI();setAuthStatus('Sesión cerrada.');}catch(e){setAuthStatus(errorText(e));}}
   function openPanel(){const panel=$('accountsPanel');if(panel&&panel.getAttribute('aria-hidden')==='false')initAuth().catch(e=>setAuthStatus(errorText(e)));}
   function start(){
     $('hvTabLocal').addEventListener('click',()=>switchTab('local'));
@@ -7754,8 +7894,10 @@ startLobby();
     $('hvTabFriends').addEventListener('click',()=>switchTab('friends'));
     $('hvSignIn').addEventListener('click',signIn);
     $('hvSignUp').addEventListener('click',signUp);
+    $('hvGuestSignIn').addEventListener('click',guestSignIn);
     $('hvSignOut').addEventListener('click',signOut);
     $('hvSaveNotificationPrefs').addEventListener('click',saveNotificationPreferences);
+    $('hvSaveLeaderboardOptIn').addEventListener('click',saveLeaderboardOptIn);
     $('hvSaveCloudProfile').addEventListener('click',async()=>{
       const nickname=(els.cloudNickname.value||'').trim();
       if(nickname.length<3||nickname.length>12){setStatus(els.cloudProfileStatus,'El nickname público debe tener de 3 a 12 caracteres.');return;}
