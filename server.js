@@ -78,6 +78,7 @@ function handleHost(ws, message) {
     role: 'host',
     lastState: null,
     lastStateAt: 0,
+    lastCombatAt: 0,
     ws
   };
   const seed = Number(message.seed);
@@ -107,6 +108,7 @@ function handleJoin(ws, message) {
     role: 'guest',
     lastState: null,
     lastStateAt: 0,
+    lastCombatAt: 0,
     ws
   };
   room.players.set(ws, player);
@@ -136,7 +138,9 @@ function relayState(ws, message) {
     cosmeticId: cosmetics.has(message.cosmeticId) ? message.cosmeticId : '',
     ironHelmet: message.ironHelmet === true,
     ironChestplate: message.ironChestplate === true,
-    ironBoots: message.ironBoots === true
+    ironBoots: message.ironBoots === true,
+    pvp: message.pvp === true,
+    hp: Number.isFinite(Number(message.hp)) ? Math.max(0, Math.min(100, Math.floor(Number(message.hp)))) : 100
   };
   if (client.role === 'host') {
     const nextClock = validClock(message.day, message.dayTime);
@@ -219,6 +223,30 @@ function relayVoiceSignal(ws, message) {
   for (const [peer] of room.players) if (peer !== ws) send(peer, { type: 'voice-signal', role: client.role, signal: clean });
 }
 
+
+const PVP_WEAPON_DAMAGE = Object.freeze({ sword: 20, tearSword: 25, machete: 15, blueMachete: 25, bow: 25 });
+function relayCombat(ws, message) {
+  const client = clients.get(ws);
+  if (!client) return;
+  const room = rooms.get(client.room);
+  const attacker = room && room.players.get(ws);
+  if (!room || !attacker || !attacker.lastState || attacker.lastState.pvp !== true || attacker.lastState.hidden) return;
+  const target = [...room.players.values()].find(player => player.ws !== ws);
+  if (!target || !target.lastState || target.lastState.pvp !== true || target.lastState.hidden) return;
+  const weapon = String(message.weapon || '');
+  const damage = PVP_WEAPON_DAMAGE[weapon];
+  if (!damage) return;
+  const now = Date.now();
+  // At most one damage event every 450 ms per attacker; stale movement states cannot hit.
+  if (now - (attacker.lastCombatAt || 0) < 450 || now - attacker.lastStateAt > 1800 || now - target.lastStateAt > 1800) return;
+  const dx = attacker.lastState.x - target.lastState.x;
+  const dy = attacker.lastState.y - target.lastState.y;
+  const distance = Math.hypot(dx, dy);
+  if (weapon === 'bow' ? distance > 500 || distance < 10 : distance > 52) return;
+  attacker.lastCombatAt = now;
+  send(target.ws, { type: 'combat-hit', weapon, damage, attackerName: attacker.name, attackerId: attacker.id, at: now });
+}
+
 function relayAction(ws, message) {
   const client = clients.get(ws);
   if (!client) return;
@@ -244,6 +272,7 @@ wss.on('connection', ws => {
     if (message.type === 'world-action') return relayWorldAction(ws, message);
     if (message.type === 'voice-signal') return relayVoiceSignal(ws, message);
     if (message.type === 'action') return relayAction(ws, message);
+    if (message.type === 'combat') return relayCombat(ws, message);
     if (message.type === 'leave') { try { ws.close(); } catch (_) {} return; }
     fail(ws, 'Tipo de mensaje no reconocido.');
   });
