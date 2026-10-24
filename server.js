@@ -55,9 +55,11 @@ function removeClient(ws) {
   clients.delete(ws);
   const room = rooms.get(client.room);
   if (!room) return;
+  const player = room.players.get(ws);
   room.players.delete(ws);
   if (client.role === 'host') {
-    for (const peer of room.players.keys()) {
+    for (const [peer, pending] of room.players) {
+      if (pending.pendingTimer) clearTimeout(pending.pendingTimer);
       send(peer, { type: 'error', message: 'El anfitrión cerró la sala.' });
       try { peer.close(4001, 'host left'); } catch (_) {}
       clients.delete(peer);
@@ -65,6 +67,8 @@ function removeClient(ws) {
     rooms.delete(client.room);
     return;
   }
+  if (player && player.pendingTimer) clearTimeout(player.pendingTimer);
+  if (!player || !player.ready) return;
   for (const peer of room.players.keys()) send(peer, { type: 'player-left', playerId: client.playerId });
   if (room.players.size === 0) rooms.delete(client.room);
 }
@@ -79,6 +83,7 @@ function handleHost(ws, message) {
     lastState: null,
     lastStateAt: 0,
     lastCombatAt: 0,
+    ready: true,
     ws
   };
   const seed = Number(message.seed);
@@ -109,21 +114,42 @@ function handleJoin(ws, message) {
     lastState: null,
     lastStateAt: 0,
     lastCombatAt: 0,
+    ready: message.readyProtocol !== true,
+    readyProtocol: message.readyProtocol === true,
+    pendingTimer: null,
     ws
   };
   room.players.set(ws, player);
   clients.set(ws, { room: roomCode, playerId: player.id, name: player.name, role: 'guest' });
   send(ws, { type: 'room-joined', room: roomCode, playerId: player.id, role: 'guest', seed: room.seed, worldName: room.worldName, hostName: room.host.name, hostState: room.host.lastState, clock: room.clock, worldState: room.worldState });
-  send(room.host.ws, { type: 'player-joined', playerId: player.id, name: player.name });
+  // New clients explicitly opt into the ready handshake; legacy v55 clients remain compatible.
+  if (player.ready) send(room.host.ws, { type: 'player-joined', playerId: player.id, name: player.name });
+  else player.pendingTimer = setTimeout(() => {
+    if (!room.players.has(ws) || player.ready) return;
+    send(ws, { type: 'error', message: 'El mundo tardó demasiado en iniciar. Vuelve a intentarlo.' });
+    try { ws.close(4002, 'guest startup timeout'); } catch (_) {}
+  }, 60000);
   if (room.host.lastState) send(ws, { type: 'player-state', ...room.host.lastState, playerId: room.host.id, name: room.host.name });
   if (room.worldState) send(ws, { type: 'world-state', state: room.worldState });
 }
+function handleReady(ws) {
+  const client = clients.get(ws);
+  if (!client || client.role !== 'guest') return;
+  const room = rooms.get(client.room);
+  const player = room && room.players.get(ws);
+  if (!room || !player || player.ready) return;
+  player.ready = true;
+  if (player.pendingTimer) { clearTimeout(player.pendingTimer); player.pendingTimer = null; }
+  send(room.host.ws, { type: 'player-joined', playerId: player.id, name: player.name });
+  send(ws, { type: 'ready-accepted', room: room.code, playerId: player.id });
+}
+
 function relayState(ws, message) {
   const client = clients.get(ws);
   if (!client) return;
   const room = rooms.get(client.room);
   const player = room && room.players.get(ws);
-  if (!player) return;
+  if (!player || !player.ready) return;
   const now = Date.now();
   if (now - player.lastStateAt < 45) return;
   const x = Number(message.x), y = Number(message.y);
@@ -175,7 +201,8 @@ function relayWorldAction(ws, message) {
   const client = clients.get(ws);
   if (!client || client.role !== 'guest') return;
   const room = rooms.get(client.room);
-  if (!room || !room.host || !room.host.ws) return;
+  const guest = room && room.players.get(ws);
+  if (!guest || !guest.ready || !room.host || !room.host.ws) return;
   const action = String(message.action || '');
   const allowed = new Set(['collect-loot','pick-berry','collect-animal','harvest-crop','plant-crop','cut-tree','add-animal']);
   if (!allowed.has(action)) return;
@@ -207,7 +234,8 @@ function relayVoiceSignal(ws, message) {
   const client = clients.get(ws);
   if (!client) return;
   const room = rooms.get(client.room);
-  if (!room) return;
+  const sender = room && room.players.get(ws);
+  if (!room || !sender || !sender.ready) return;
   const signal = message.signal;
   if (!signal || typeof signal !== 'object' || Array.isArray(signal)) return;
   const allowed = new Set(['ready','offer','answer','candidate','hangup']);
@@ -220,7 +248,7 @@ function relayVoiceSignal(ws, message) {
   if (Buffer.byteLength(encoded, 'utf8') > MAX_VOICE_SIGNAL_BYTES) return fail(ws, 'La señal de voz es demasiado grande.');
   let clean;
   try { clean = JSON.parse(encoded); } catch (_) { return fail(ws, 'La señal de voz no es válida.'); }
-  for (const [peer] of room.players) if (peer !== ws) send(peer, { type: 'voice-signal', role: client.role, signal: clean });
+  for (const [peer, target] of room.players) if (peer !== ws && target.ready) send(peer, { type: 'voice-signal', role: client.role, signal: clean });
 }
 
 
@@ -230,9 +258,9 @@ function relayCombat(ws, message) {
   if (!client) return;
   const room = rooms.get(client.room);
   const attacker = room && room.players.get(ws);
-  if (!room || !attacker || !attacker.lastState || attacker.lastState.pvp !== true || attacker.lastState.hidden) return;
+  if (!room || !attacker || !attacker.ready || !attacker.lastState || attacker.lastState.pvp !== true || attacker.lastState.hidden) return;
   const target = [...room.players.values()].find(player => player.ws !== ws);
-  if (!target || !target.lastState || target.lastState.pvp !== true || target.lastState.hidden) return;
+  if (!target || !target.ready || !target.lastState || target.lastState.pvp !== true || target.lastState.hidden) return;
   const weapon = String(message.weapon || '');
   const damage = PVP_WEAPON_DAMAGE[weapon];
   if (!damage) return;
@@ -247,15 +275,18 @@ function relayCombat(ws, message) {
   send(target.ws, { type: 'combat-hit', weapon, damage, attackerName: attacker.name, attackerId: attacker.id, at: now });
 }
 
+function clientPlayerReady(room, ws) { const player = room && room.players.get(ws); return !!(player && player.ready); }
+
 function relayAction(ws, message) {
   const client = clients.get(ws);
   if (!client) return;
   const room = rooms.get(client.room);
-  if (!room) return;
+  const player = room && room.players.get(ws);
+  if (!room || !player || !player.ready) return;
   const action = message.action === 'B' ? 'B' : message.action === 'A' ? 'A' : '';
   if (!action) return;
-  for (const [peer] of room.players) {
-    if (peer !== ws) send(peer, { type: 'player-action', playerId: client.playerId, name: client.name, action });
+  for (const [peer, target] of room.players) {
+    if (peer !== ws && target.ready && clientPlayerReady(room, ws)) send(peer, { type: 'player-action', playerId: client.playerId, name: client.name, action });
   }
 }
 
@@ -267,6 +298,7 @@ wss.on('connection', ws => {
     if (!message || typeof message !== 'object') return fail(ws, 'Mensaje no válido.');
     if (message.type === 'host') return handleHost(ws, message);
     if (message.type === 'join') return handleJoin(ws, message);
+    if (message.type === 'ready') return handleReady(ws);
     if (message.type === 'state') return relayState(ws, message);
     if (message.type === 'world-state') return relayWorldState(ws, message);
     if (message.type === 'world-action') return relayWorldAction(ws, message);
