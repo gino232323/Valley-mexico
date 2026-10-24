@@ -6,6 +6,8 @@ const { WebSocketServer, WebSocket } = require('ws');
 
 const PORT = Number(process.env.PORT) || 8080;
 const MAX_ROOMS = Number(process.env.MAX_ROOMS) || 500;
+// Rooms survive transient host network loss, but never longer than this grace.
+const HOST_RESUME_GRACE_MS = Math.max(15000, Math.min(180000, Number(process.env.HOST_RESUME_GRACE_MS) || 90000));
 const rooms = new Map();
 const MAX_MESSAGE_BYTES = 262144;
 const MAX_WORLD_STATE_BYTES = 240000;
@@ -41,6 +43,8 @@ function newRoomCode() {
   }
   throw new Error('No hay códigos de sala disponibles.');
 }
+function tokenHash(token) { return crypto.createHash('sha256').update(String(token || '')).digest('hex'); }
+function freshResumeToken() { return crypto.randomBytes(32).toString('base64url'); }
 function safeName(value) {
   return String(value || 'Granjero').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 16) || 'Granjero';
 }
@@ -58,24 +62,66 @@ function removeClient(ws) {
   const player = room.players.get(ws);
   room.players.delete(ws);
   if (client.role === 'host') {
-    for (const [peer, pending] of room.players) {
-      if (pending.pendingTimer) clearTimeout(pending.pendingTimer);
-      send(peer, { type: 'error', message: 'El anfitrión cerró la sala.' });
-      try { peer.close(4001, 'host left'); } catch (_) {}
-      clients.delete(peer);
+    // Ignore a delayed close event from a replaced/stale socket.
+    if (room.host.ws !== ws) return;
+    room.host.ws = null;
+    room.hostDisconnectedAt = Date.now();
+    if (room.hostResumeTimer) clearTimeout(room.hostResumeTimer);
+    for (const [peer, guest] of room.players) {
+      if (guest.pendingTimer) { clearTimeout(guest.pendingTimer); guest.pendingTimer = null; }
+      send(peer, { type: 'host-disconnected', graceMs: HOST_RESUME_GRACE_MS });
     }
-    rooms.delete(client.room);
+    room.hostResumeTimer = setTimeout(() => {
+      if (rooms.get(client.room) !== room || room.host.ws) return;
+      for (const [peer] of room.players) {
+        send(peer, { type: 'error', message: 'El tiempo para recuperar la sala expiró.' });
+        try { peer.close(4003, 'host resume expired'); } catch (_) {}
+        clients.delete(peer);
+      }
+      room.players.clear();
+      rooms.delete(client.room);
+    }, HOST_RESUME_GRACE_MS);
+    if (room.hostResumeTimer.unref) room.hostResumeTimer.unref();
     return;
   }
   if (player && player.pendingTimer) clearTimeout(player.pendingTimer);
   if (!player || !player.ready) return;
   for (const peer of room.players.keys()) send(peer, { type: 'player-left', playerId: client.playerId });
-  if (room.players.size === 0) rooms.delete(client.room);
+  if (room.players.size === 0 && !room.host.ws) {
+    // Keep an empty suspended room only until its existing host grace expires.
+  } else if (room.players.size === 0) rooms.delete(client.room);
 }
+function handleResumeHost(ws, message) {
+  if (clients.has(ws)) return fail(ws, 'Esta conexión ya está asociada a una sala.');
+  const roomCode = String(message.room || '').trim().toUpperCase();
+  const room = rooms.get(roomCode);
+  const token = String(message.token || '');
+  if (!room || !token || !room.resumeTokenHash || room.resumeTokenHash !== tokenHash(token))
+    return fail(ws, 'No se pudo recuperar la sala: token inválido o expirado.');
+  if (room.host.ws || !room.hostDisconnectedAt || Date.now() - room.hostDisconnectedAt > HOST_RESUME_GRACE_MS)
+    return fail(ws, 'La sala ya tiene anfitrión conectado o venció el tiempo de recuperación.');
+  if (room.hostResumeTimer) { clearTimeout(room.hostResumeTimer); room.hostResumeTimer = null; }
+  const nextToken = freshResumeToken();
+  room.resumeTokenHash = tokenHash(nextToken);
+  room.host.ws = ws;
+  room.hostDisconnectedAt = 0;
+  room.host.name = safeName(message.name || room.host.name);
+  room.players.set(ws, room.host);
+  clients.set(ws, { room: roomCode, playerId: room.host.id, name: room.host.name, role: 'host' });
+  send(ws, { type: 'room-resumed', room: roomCode, playerId: room.host.id, role: 'host', seed: room.seed, worldName: room.worldName, clock: room.clock, worldState: room.worldState, resumeToken: nextToken });
+  for (const [peer, guest] of room.players) {
+    if (peer === ws || !guest.ready) continue;
+    send(peer, { type: 'player-state', ...(room.host.lastState || {}), playerId: room.host.id, name: room.host.name });
+    if (room.worldState) send(peer, { type: 'world-state', state: room.worldState });
+    send(peer, { type: 'player-joined', playerId: room.host.id, name: room.host.name });
+  }
+}
+
 function handleHost(ws, message) {
   if (clients.has(ws)) return fail(ws, 'Esta conexión ya está asociada a una sala.');
   if (rooms.size >= MAX_ROOMS) return fail(ws, 'El servidor está lleno por ahora.');
   const roomCode = newRoomCode();
+  const resumeToken = freshResumeToken();
   const player = {
     id: crypto.randomBytes(6).toString('hex'),
     name: safeName(message.name),
@@ -95,17 +141,21 @@ function handleHost(ws, message) {
     clock: validClock(message.day, message.dayTime) || { day: 1, dayTime: 0.3 },
     worldState: null,
     worldStateAt: 0,
+    resumeTokenHash: tokenHash(resumeToken),
+    hostDisconnectedAt: 0,
+    hostResumeTimer: null,
     players: new Map([[ws, player]])
   };
   rooms.set(roomCode, room);
   clients.set(ws, { room: roomCode, playerId: player.id, name: player.name, role: 'host' });
-  send(ws, { type: 'room-created', room: roomCode, playerId: player.id, role: 'host', seed: room.seed, worldName: room.worldName, clock: room.clock });
+  send(ws, { type: 'room-created', room: roomCode, playerId: player.id, role: 'host', seed: room.seed, worldName: room.worldName, clock: room.clock, resumeToken });
 }
 function handleJoin(ws, message) {
   if (clients.has(ws)) return fail(ws, 'Esta conexión ya está asociada a una sala.');
   const roomCode = String(message.room || '').trim().toUpperCase();
   const room = rooms.get(roomCode);
   if (!room) return fail(ws, 'No encontré esa sala. Revisa el código o pide al anfitrión que la cree de nuevo.');
+  if (!room.host.ws || room.hostDisconnectedAt) return fail(ws, 'El anfitrión perdió la conexión; espera a que recupere la sala.');
   if (room.players.size >= 2) return fail(ws, 'La sala ya tiene dos jugadores.');
   const player = {
     id: crypto.randomBytes(6).toString('hex'),
@@ -297,6 +347,7 @@ wss.on('connection', ws => {
     try { message = JSON.parse(raw.toString()); } catch (_) { return fail(ws, 'Mensaje no válido.'); }
     if (!message || typeof message !== 'object') return fail(ws, 'Mensaje no válido.');
     if (message.type === 'host') return handleHost(ws, message);
+    if (message.type === 'resume-host') return handleResumeHost(ws, message);
     if (message.type === 'join') return handleJoin(ws, message);
     if (message.type === 'ready') return handleReady(ws);
     if (message.type === 'state') return relayState(ws, message);
@@ -305,7 +356,26 @@ wss.on('connection', ws => {
     if (message.type === 'voice-signal') return relayVoiceSignal(ws, message);
     if (message.type === 'action') return relayAction(ws, message);
     if (message.type === 'combat') return relayCombat(ws, message);
-    if (message.type === 'leave') { try { ws.close(); } catch (_) {} return; }
+    if (message.type === 'leave') {
+      const client = clients.get(ws);
+      // An explicit host leave is intentional, unlike a network close: end the room now.
+      if (client && client.role === 'host') {
+        const room = rooms.get(client.room);
+        if (room) {
+          if (room.hostResumeTimer) clearTimeout(room.hostResumeTimer);
+          for (const [peer] of room.players) {
+            if (peer === ws) continue;
+            send(peer, { type: 'error', message: 'El anfitrión cerró la sala.' });
+            try { peer.close(4001, 'host left'); } catch (_) {}
+            clients.delete(peer);
+          }
+          rooms.delete(client.room);
+          clients.delete(ws);
+        }
+      }
+      try { ws.close(); } catch (_) {}
+      return;
+    }
     fail(ws, 'Tipo de mensaje no reconocido.');
   });
   ws.on('close', () => removeClient(ws));
