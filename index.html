@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Play Night: Ánimas de México</title><meta name="theme-color" content="#14251b"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Play Night: Ánimas de México"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icon-192.png">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Play Night: Ánimas de México — preview sincronización perfil</title><meta name="theme-color" content="#14251b"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Play Night: Ánimas de México"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
 
@@ -7907,7 +7907,7 @@ let lastMenuClickAt=0;function bindMobileTap(el,handler){if(!el)return;let last=
 HVD.importLegacy();
 const profileToggle=$('profileToggle'),profileMenu=$('profileMenu'),profileArea=$('lobbyProfileArea'),accountsPanel=$('accountsPanel'),profileNickname=$('profileNickname'),profilePhotoPreview=$('profilePhotoPreview'),profileAvatarFallback=$('profileAvatarFallback'),profilePhotoInput=$('profilePhotoInput'),profileAccountStatus=$('profileAccountStatus');
 const PROFILE_PHOTO_KEY='hvs_profile_photo';
-function refreshProfileCard(){const nick=(HVD.getName()||'Granjero').trim()||'Granjero';profileNickname.textContent=nick;const photo=HVD.Store.get(PROFILE_PHOTO_KEY)||'';if(photo.startsWith('data:image/')){profilePhotoPreview.src=photo;profilePhotoPreview.style.display='block';profileAvatarFallback.style.display='none';}else{profilePhotoPreview.removeAttribute('src');profilePhotoPreview.style.display='none';profileAvatarFallback.style.display='block';}}
+function refreshProfileCard(){const nick=(HVD.getName()||'Granjero').trim()||'Granjero';profileNickname.textContent=nick;let cloudAvatar='';const seed=Number(window.__HVDCloudAvatarSeed)||0;if(seed&&window.HVLeaderboard&&typeof window.HVLeaderboard.renderAvatar==='function'){try{const avatar=window.HVLeaderboard.renderAvatar(seed,'hvCloudAvatarPreview'),svg=avatar&&avatar.querySelector('svg');if(svg)cloudAvatar='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.outerHTML);}catch(_){}}const localPhoto=HVD.Store.get(PROFILE_PHOTO_KEY)||'',photo=cloudAvatar||localPhoto;if(photo.startsWith('data:image/')){profilePhotoPreview.src=photo;profilePhotoPreview.style.display='block';profileAvatarFallback.style.display='none';}else{profilePhotoPreview.removeAttribute('src');profilePhotoPreview.style.display='none';profileAvatarFallback.style.display='block';}}
 function setProfileMenu(open){profileMenu.style.display=open?'flex':'none';profileMenu.setAttribute('aria-hidden',open?'false':'true');profileToggle.setAttribute('aria-expanded',open?'true':'false');}
 function closeAccountsPanel(){accountsPanel.style.display='none';accountsPanel.setAttribute('aria-hidden','true');}
 function openAccountsPanel(){setProfileMenu(false);accountsPanel.style.display='flex';accountsPanel.setAttribute('aria-hidden','false');}
@@ -8325,12 +8325,12 @@ startLobby();
   }
   async function refreshAuthUI(){
     if(!els.authState)return;
-    if(!currentUser){ownProfile=null;leaderboardOptIn=false;lastLeaderboardUserId='';lastLeaderboardDay=0;els.authState.textContent='No has iniciado sesión. El registro público está temporalmente pausado.';els.authForm.classList.remove('hvInactive');els.signedIn.classList.add('hvInactive');els.friends.classList.add('hvInactive');els.accountEmail.textContent='—';els.updatesOptIn.checked=false;els.giftsOptIn.checked=false;if(els.leaderboardOptIn)els.leaderboardOptIn.checked=false;setStatus(els.leaderboardPrefStatus,'Inicia sesión y activa la participación opcional.');updateLeaderboardConsentSummary();return;}
+    if(!currentUser){ownProfile=null;window.__HVDCloudAvatarSeed=0;HVD.Store.remove('hvs_cloud_nickname');refreshProfileCard();leaderboardOptIn=false;lastLeaderboardUserId='';lastLeaderboardDay=0;els.authState.textContent='No has iniciado sesión.';els.authForm.classList.remove('hvInactive');els.signedIn.classList.add('hvInactive');els.friends.classList.add('hvInactive');els.accountEmail.textContent='—';els.updatesOptIn.checked=false;els.giftsOptIn.checked=false;if(els.leaderboardOptIn)els.leaderboardOptIn.checked=false;setStatus(els.leaderboardPrefStatus,'Inicia sesión y activa la participación opcional.');updateLeaderboardConsentSummary();return;}
     els.authState.textContent=currentUser.is_anonymous?'Sesión invitada activa':'Sesión activa · correo privado';els.authForm.classList.add('hvInactive');els.signedIn.classList.remove('hvInactive');
     try{
       const mine=rpcRows(await rpc('hv_get_my_profile'))[0];
       if(!mine){ownProfile=null;setAuthStatus('La cuenta no tiene perfil confirmado. Revisa la configuración de correo y vuelve a iniciar sesión.');els.signedIn.classList.add('hvInactive');els.friends.classList.add('hvInactive');return;}
-      ownProfile=mine;els.ownId.textContent=String(mine.public_id);els.cloudNickname.value=mine.nickname||'';els.discoverable.checked=!!mine.discoverable;els.friends.classList.remove('hvInactive');
+      ownProfile=mine;const cloudNick=String(mine.nickname||'').trim().slice(0,12);window.__HVDCloudAvatarSeed=Number(mine.avatar_seed)||0;if(cloudNick){HVD.setName(cloudNick);HVD.Store.set('hvs_cloud_nickname',cloudNick);if(nameIn)nameIn.value=cloudNick;refreshProfileCard();}else refreshProfileCard();els.ownId.textContent=String(mine.public_id);els.cloudNickname.value=mine.nickname||'';els.discoverable.checked=!!mine.discoverable;els.friends.classList.remove('hvInactive');
       try{const ranking=rpcRows(await rpc('hv_get_leaderboard_opt_in'))[0];leaderboardOptIn=!!(ranking&&ranking.enabled);els.leaderboardOptIn.checked=leaderboardOptIn;setStatus(els.leaderboardPrefStatus,leaderboardOptIn?'Participas en el ranking mundial.':'Participación desactivada; solo se mostrarán quienes la acepten.');}catch(e){leaderboardOptIn=false;els.leaderboardOptIn.checked=false;setStatus(els.leaderboardPrefStatus,'El ranking se activa cuando se instale la actualización del servidor.');}
       updateLeaderboardConsentSummary();
       const verified=!!(currentUser.email&&(currentUser.email_confirmed_at||currentUser.confirmed_at));
@@ -8474,7 +8474,7 @@ startLobby();
       const nickname=(els.cloudNickname.value||'').trim();
       if(nickname.length<3||nickname.length>12){setStatus(els.cloudProfileStatus,'El nickname público debe tener de 3 a 12 caracteres.');return;}
       const button=$('hvSaveCloudProfile');button.disabled=true;setStatus(els.cloudProfileStatus,'Guardando…');
-      try{await rpc('hv_update_my_profile',{p_nickname:nickname,p_discoverable:!!els.discoverable.checked});ownProfile.nickname=nickname;setStatus(els.cloudProfileStatus,'Nickname de nube actualizado. El nickname y la foto locales siguen sin cambios.');}
+      try{await rpc('hv_update_my_profile',{p_nickname:nickname,p_discoverable:!!els.discoverable.checked});ownProfile.nickname=nickname;HVD.setName(nickname);HVD.Store.set('hvs_cloud_nickname',nickname);if(nameIn)nameIn.value=nickname;refreshProfileCard();setStatus(els.cloudProfileStatus,'Nickname de nube y del juego sincronizados.');}
       catch(e){setStatus(els.cloudProfileStatus,errorText(e));}
       finally{button.disabled=false;}
     });
