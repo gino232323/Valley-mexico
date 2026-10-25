@@ -1,7 +1,7 @@
 {
-  "name": "Harvest Valley México",
-  "short_name": "Harvest Valley",
-  "description": "Juego de granja pixel art con salas privadas de dos jugadores.",
+  "name": "Play Night: Ánimas de México",
+  "short_name": "Play Night: Ánimas",
+  "description": "Aventura mexicana de granja, leyendas y criaturas sobrenaturales.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
